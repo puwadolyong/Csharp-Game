@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C# Mini Game Portal (Full Version)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;800&display=swap');
+        
+        body {
+            font-family: 'Kanit', sans-serif;
+            background-color: #111;
+            color: white;
+            margin: 0;
+            padding: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- ระบบ Tab --- */
+        .tab-header {
+            display: flex;
+            background-color: #222;
+            padding: 10px 10px 0 10px;
+            justify-content: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.5);
+            z-index: 10;
+        }
+
+        .tab-link {
+            background-color: #333;
+            color: white;
+            border: none;
+            outline: none;
+            cursor: pointer;
+            padding: 15px 30px;
+            font-size: 18px;
+            font-family: 'Kanit', sans-serif;
+            font-weight: bold;
+            border-radius: 10px 10px 0 0;
+            margin: 0 5px;
+            transition: 0.3s;
+        }
+
+        .tab-link:hover { background-color: #555; }
+        .tab-link.active {
+            background-color: #e94560;
+            color: white;
+        }
+
+        .tab-content {
+            display: none;
+            flex-grow: 1;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeEffect 0.5s;
+        }
+
+        @keyframes fadeEffect {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+
+        /* --- สไตล์ส่วนกลางของกล่องเกม --- */
+        .game-container {
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            text-align: center;
+            width: 100%;
+            max-width: 600px;
+        }
+        .stats { display: flex; justify-content: space-between; font-size: 20px; margin-bottom: 20px; font-weight: 600; }
+        .game-over { display: none; }
+        .game-over h2 { font-size: 36px; }
+        .btn-restart { font-family: 'Kanit', sans-serif; font-size: 20px; padding: 10px 30px; border: none; border-radius: 30px; cursor: pointer; color: white; margin-top: 20px; }
+
+        /* --- สไตล์เฉพาะเกมที่ 1 (Data Type) --- */
+        #Game1 { background-color: #1a1a2e; }
+        .g1-container { background-color: #16213e; }
+        .g1-container h1 { color: #e94560; margin-top: 0;}
+        #question-box1 { background-color: #0f3460; padding: 40px 20px; border-radius: 15px; font-size: 40px; font-family: monospace; font-weight: bold; margin-bottom: 30px; border: 3px solid #e94560; }
+        .btn-grid1 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .type-btn { font-family: 'Kanit', sans-serif; font-size: 24px; font-weight: bold; padding: 15px; border: none; border-radius: 10px; cursor: pointer; color: white; transition: 0.1s;}
+        .type-btn:active { transform: scale(0.95); }
+        .btn-int { background-color: #e63946; } .btn-float { background-color: #457b9d; } .btn-char { background-color: #e9c46a; color: #333; } .btn-string { background-color: #2a9d8f; }
+
+        /* --- สไตล์เฉพาะเกมที่ 2 (Format Matcher) --- */
+        #Game2 { background-color: #2b2d42; }
+        .g2-container { background-color: #8d99ae; color: #2b2d42;}
+        .g2-container h1 { color: #2b2d42; margin-top: 0;}
+        #code-box2 { background-color: #edf2f4; padding: 25px 20px; border-radius: 10px; font-size: 20px; font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-bottom: 25px; text-align: left; border-left: 8px solid #ef233c; line-height: 1.6; }
+        .keyword { color: #0000ff; } .string { color: #a31515; }
+        .btn-grid2 { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .choice-btn { font-family: 'Kanit', sans-serif; font-size: 18px; font-weight: bold; padding: 15px; border: none; border-radius: 10px; cursor: pointer; background-color: #ef233c; color: white; text-align: left; }
+
+        /* --- สไตล์เฉพาะเกมที่ 3 (Code Builder) --- */
+        #Game3 { background-color: #1e1e24; }
+        .g3-container { background-color: #2b2d42; }
+        .g3-container h1 { color: #fb8500; margin-top: 0;}
+        .mission-box { background-color: #ffb703; color: #023047; padding: 15px; border-radius: 10px; font-size: 22px; font-weight: bold; margin-bottom: 20px; }
+        #drop-zone { background-color: #023047; min-height: 80px; border: 3px dashed #fb8500; border-radius: 10px; margin-bottom: 20px; display: flex; flex-wrap: wrap; align-items: center; padding: 15px; gap: 10px; }
+        #word-pool { background-color: #8ecaed; padding: 20px; border-radius: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        .word-block { background-color: #219ebc; color: white; padding: 10px 20px; border-radius: 8px; font-size: 20px; font-family: monospace; font-weight: bold; cursor: pointer; user-select: none; box-shadow: 0 4px 0 #023047; }
+        .word-block:active { transform: translateY(4px); box-shadow: 0 0 0 #023047; }
+        .btn-check { background-color: #fb8500; color: white; font-size: 22px; padding: 12px 40px; border: none; border-radius: 30px; cursor: pointer; font-family: 'Kanit', sans-serif; font-weight: bold; box-shadow: 0 5px 0 #d00000; }
+        #feedback3 { margin-top: 20px; font-size: 24px; font-weight: bold; min-height: 36px; }
+        .correct { color: #52b788; } .wrong { color: #e63946; }
+    </style>
+</head>
+<body>
+
+    <div class="tab-header">
+        <button class="tab-link active" onclick="openTab(event, 'Game1')">🎮 เกม 1: แยกประเภท</button>
+        <button class="tab-link" onclick="openTab(event, 'Game2')">🧩 เกม 2: ถอดรหัส</button>
+        <button class="tab-link" onclick="openTab(event, 'Game3')">🛠️ เกม 3: ประกอบโค้ด</button>
+    </div>
+
+    <div id="Game1" class="tab-content" style="display: flex;">
+        <div class="game-container g1-container" id="g1-screen">
+            <h1>🎮 C# Data Type Sorter</h1>
+            <div class="stats"><div>คะแนน: <span id="score1">0</span></div><div>❤️: <span id="lives1">3</span></div></div>
+            <div id="question-box1">"Ready?"</div>
+            <div class="btn-grid1">
+                <button class="type-btn btn-int" onclick="checkAnswer1('int')">int</button>
+                <button class="type-btn btn-float" onclick="checkAnswer1('float')">float</button>
+                <button class="type-btn btn-char" onclick="checkAnswer1('char')">char</button>
+                <button class="type-btn btn-string" onclick="checkAnswer1('string')">string</button>
+            </div>
+        </div>
+        <div class="game-container g1-container game-over" id="g1-over">
+            <h2 style="color: #e94560;">Game Over!</h2>
+            <p style="font-size: 24px;">คะแนนรวม: <strong id="final-score1">0</strong></p>
+            <button class="btn-restart" style="background-color: #e94560;" onclick="startGame1()">เล่นอีกครั้ง</button>
+        </div>
+    </div>
+
+    <div id="Game2" class="tab-content">
+        <div class="game-container g2-container" id="g2-screen">
+            <h1>🧩 C# Format Matcher</h1>
+            <div class="stats"><div>คะแนน: <span id="score2">0</span></div><div>❤️: <span id="lives2">3</span></div></div>
+            <div id="code-box2">Loading...</div>
+            <div class="btn-grid2" id="choices-grid2"></div>
+        </div>
+        <div class="game-container g2-container game-over" id="g2-over">
+            <h2 style="color: #ef233c;">Game Over!</h2>
+            <p style="font-size: 24px;">คะแนนของคุณคือ: <strong id="final-score2">0</strong></p>
+            <button class="btn-restart" style="background-color: #ef233c;" onclick="startGame2()">เล่นอีกครั้ง</button>
+        </div>
+    </div>
+
+    <div id="Game3" class="tab-content">
+        <div class="game-container g3-container">
+            <h1>🛠️ C# Code Builder</h1>
+            <div class="mission-box" id="mission-text3">ภารกิจ: โหลดข้อมูล...</div>
+            <div id="drop-zone"></div>
+            <div id="word-pool"></div>
+            <button class="btn-check" onclick="checkAnswer3()">ตรวจคำตอบ!</button>
+            <div id="feedback3"></div>
+        </div>
+    </div>
+
+<script>
+    // --- ระบบเปลี่ยน Tab ---
+    function openTab(evt, tabName) {
+        let i, tabcontent, tablinks;
+        tabcontent = document.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        tablinks = document.getElementsByClassName("tab-link");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+            if(tabName === 'Game1') evt.currentTarget.style.backgroundColor = "#e94560";
+            else if(tabName === 'Game2') evt.currentTarget.style.backgroundColor = "#ef233c";
+            else if(tabName === 'Game3') evt.currentTarget.style.backgroundColor = "#fb8500";
+        }
+        for (i = 0; i < tablinks.length; i++) {
+            if(!tablinks[i].className.includes("active")) {
+                tablinks[i].style.backgroundColor = "";
+            }
+        }
+        document.getElementById(tabName).style.display = "flex";
+        evt.currentTarget.className += " active";
+    }
+
+    // ================= โลจิกเกมที่ 1 (100 คำถาม) =================
+    const q1 = [
+        { q: '100', a: 'int' }, { q: '0', a: 'int' }, { q: '-5', a: 'int' }, { q: '42', a: 'int' }, { q: '2026', a: 'int' }, { q: '-999', a: 'int' }, { q: '12345', a: 'int' }, { q: '7', a: 'int' }, { q: '-1', a: 'int' }, { q: '888', a: 'int' }, { q: '1024', a: 'int' }, { q: '-256', a: 'int' }, { q: '99', a: 'int' }, { q: '500', a: 'int' }, { q: '-500', a: 'int' }, { q: '1', a: 'int' }, { q: '365', a: 'int' }, { q: '-12', a: 'int' }, { q: '404', a: 'int' }, { q: '777', a: 'int' }, { q: '-88', a: 'int' }, { q: '1000000', a: 'int' }, { q: '13', a: 'int' }, { q: '-100', a: 'int' }, { q: '55', a: 'int' },
+        { q: '3.14f', a: 'float' }, { q: '0.0f', a: 'float' }, { q: '-1.5f', a: 'float' }, { q: '99.99f', a: 'float' }, { q: '1.0f', a: 'float' }, { q: '-0.5f', a: 'float' }, { q: '2.5f', a: 'float' }, { q: '10.10f', a: 'float' }, { q: '-3.33f', a: 'float' }, { q: '123.456f', a: 'float' }, { q: '0.001f', a: 'float' }, { q: '-9.8f', a: 'float' }, { q: '7.77f', a: 'float' }, { q: '50.5f', a: 'float' }, { q: '-100.1f', a: 'float' }, { q: '36.6f', a: 'float' }, { q: '2.718f', a: 'float' }, { q: '-0.01f', a: 'float' }, { q: '8.8f', a: 'float' }, { q: '4.04f', a: 'float' }, { q: '-55.5f', a: 'float' }, { q: '0.99f', a: 'float' }, { q: '11.11f', a: 'float' }, { q: '-2.2f', a: 'float' }, { q: '100.0f', a: 'float' },
+        { q: "'A'", a: 'char' }, { q: "'z'", a: 'char' }, { q: "'1'", a: 'char' }, { q: "'0'", a: 'char' }, { q: "'9'", a: 'char' }, { q: "' '", a: 'char' }, { q: "'!'", a: 'char' }, { q: "'@'", a: 'char' }, { q: "'#'", a: 'char' }, { q: "'$'", a: 'char' }, { q: "'%'", a: 'char' }, { q: "'&'", a: 'char' }, { q: "'*'", a: 'char' }, { q: "'+'", a: 'char' }, { q: "'-'", a: 'char' }, { q: "'='", a: 'char' }, { q: "'?'", a: 'char' }, { q: "'/'", a: 'char' }, { q: "'x'", a: 'char' }, { q: "'Y'", a: 'char' }, { q: "'c'", a: 'char' }, { q: "'K'", a: 'char' }, { q: "'.'", a: 'char' }, { q: "'_'", a: 'char' }, { q: "'M'", a: 'char' },
+        { q: '"Hello"', a: 'string' }, { q: '"C#"', a: 'string' }, { q: '"World"', a: 'string' }, { q: '"123"', a: 'string' }, { q: '"3.14f"', a: 'string' }, { q: '"true"', a: 'string' }, { q: '"false"', a: 'string' }, { q: '" "', a: 'string' }, { q: '""', a: 'string' }, { q: '"A"', a: 'string' }, { q: '"a"', a: 'string' }, { q: '"Apple"', a: 'string' }, { q: '"Cat"', a: 'string' }, { q: '"DOG"', a: 'string' }, { q: '"2026"', a: 'string' }, { q: '"-100"', a: 'string' }, { q: '"float"', a: 'string' }, { q: '"int"', a: 'string' }, { q: '"char"', a: 'string' }, { q: '"string"', a: 'string' }, { q: '"Game Over"', a: 'string' }, { q: '"100%"', a: 'string' }, { q: '"Winner"', a: 'string' }, { q: '"@_@"', a: 'string' }, { q: '"0"', a: 'string' }
+    ];
+    let s1 = 0, l1 = 3, curQ1 = {};
+    
+    function startGame1() {
+        s1 = 0; l1 = 3;
+        document.getElementById('score1').innerText = s1;
+        document.getElementById('lives1').innerText = l1;
+        document.getElementById('g1-screen').style.display = 'block';
+        document.getElementById('g1-over').style.display = 'none';
+        nextQ1();
+    }
+    
+    function nextQ1() {
+        curQ1 = q1[Math.floor(Math.random() * q1.length)];
+        let box = document.getElementById('question-box1');
+        box.innerText = curQ1.q;
+        box.style.backgroundColor = '#0f3460';
+    }
+    
+    function checkAnswer1(ans) {
+        let box = document.getElementById('question-box1');
+        if (ans === curQ1.a) {
+            s1 += 10; box.style.backgroundColor = '#2a9d8f'; setTimeout(nextQ1, 200);
+        } else {
+            l1 -= 1; box.style.backgroundColor = '#e63946';
+            if (l1 <= 0) setTimeout(end1, 300);
+            else setTimeout(() => { box.style.backgroundColor = '#0f3460'; }, 300);
+        }
+        document.getElementById('score1').innerText = s1;
+        document.getElementById('lives1').innerText = l1;
+    }
+    
+    function end1() {
+        document.getElementById('g1-screen').style.display = 'none';
+        document.getElementById('g1-over').style.display = 'block';
+        document.getElementById('final-score1').innerText = s1;
+    }
+
+    // ================= โลจิกเกมที่ 2 (50 คำถาม) =================
+    const q2 = [
+        { code: `<span class="keyword">string</span> pet = <span class="string">"สุนัข"</span>;<br>Console.WriteLine(<span class="string">"ฉันเลี้ยง {0}"</span>, pet);`, choices: ["ฉันเลี้ยง สุนัข", "ฉันเลี้ยง pet", "ฉันเลี้ยง {0}", "สุนัข ฉันเลี้ยง"], ans: 0 },
+        { code: `<span class="keyword">int</span> level = 99;<br>Console.WriteLine(<span class="string">"เลเวลของคุณคือ {0}"</span>, level);`, choices: ["เลเวลของคุณคือ 99", "เลเวลของคุณคือ level", "เลเวล 99 ของคุณคือ", "99 คือเลเวลของคุณ"], ans: 0 },
+        { code: `<span class="keyword">string</span> color = <span class="string">"สีแดง"</span>;<br><span class="keyword">string</span> fruit = <span class="string">"แอปเปิล"</span>;<br>Console.WriteLine(<span class="string">"{0} คือ {1}"</span>, fruit, color);`, choices: ["แอปเปิล คือ สีแดง", "สีแดง คือ แอปเปิล", "fruit คือ color", "{0} คือ {1}"], ans: 0 },
+        { code: `<span class="keyword">int</span> score = 500;<br>Console.WriteLine(<span class="string">"Score: {0} Points"</span>, score);`, choices: ["Score: 500 Points", "500 Score Points", "Score: score Points", "Score: 0 Points"], ans: 0 },
+        { code: `<span class="keyword">string</span> name = <span class="string">"สมชาย"</span>;<br><span class="keyword">int</span> age = 12;<br>Console.WriteLine(<span class="string">"{0} อายุ {1}"</span>, name, age);`, choices: ["สมชาย อายุ 12", "12 อายุ สมชาย", "name อายุ age", "{0} อายุ {1}"], ans: 0 },
+        { code: `<span class="keyword">string</span> time = <span class="string">"เช้า"</span>;<br>Console.WriteLine(<span class="string">"สวัสดีตอน{0}ครับ"</span>, time);`, choices: ["สวัสดีตอนเช้าครับ", "สวัสดีตอน time ครับ", "เช้าสวัสดีตอนครับ", "สวัสดีตอน{0}ครับ"], ans: 0 },
+        { code: `<span class="keyword">char</span> grade = <span class="string">'A'</span>;<br>Console.WriteLine(<span class="string">"สอบได้เกรด {0}"</span>, grade);`, choices: ["สอบได้เกรด A", "สอบได้เกรด grade", "สอบได้เกรด 'A'", "A สอบได้เกรด"], ans: 0 },
+        { code: `<span class="keyword">string</span> boss = <span class="string">"มังกร"</span>;<br>Console.WriteLine(<span class="string">"ระวัง! {0} บุก!"</span>, boss);`, choices: ["ระวัง! มังกร บุก!", "มังกร ระวัง! บุก!", "ระวัง! boss บุก!", "ระวัง! {0} บุก!"], ans: 0 },
+        { code: `<span class="keyword">int</span> gold = 1000;<br>Console.WriteLine(<span class="string">"ทอง: {0} G"</span>, gold);`, choices: ["ทอง: 1000 G", "ทอง: gold G", "1000: ทอง G", "ทอง: {0} G"], ans: 0 },
+        { code: `<span class="keyword">string</span> p1 = <span class="string">"ผู้ชนะ"</span>;<br>Console.WriteLine(<span class="string">"คุณคือ {0}"</span>, p1);`, choices: ["คุณคือ ผู้ชนะ", "ผู้ชนะ คือคุณ", "คุณคือ p1", "คุณคือ {0}"], ans: 0 },
+        { code: `<span class="keyword">string</span> a = <span class="string">"กิน"</span>;<br><span class="keyword">string</span> b = <span class="string">"ข้าว"</span>;<br>Console.WriteLine(<span class="string">"{1} น่า {0}"</span>, a, b);`, choices: ["กิน น่า ข้าว", "ข้าว น่า กิน", "a น่า b", "b น่า a"], ans: 1 },
+        { code: `<span class="keyword">int</span> x = 1;<br><span class="keyword">int</span> y = 2;<br>Console.WriteLine(<span class="string">"นับ {1} และ {0}"</span>, x, y);`, choices: ["นับ 1 และ 2", "นับ 2 และ 1", "นับ x และ y", "นับ 0 และ 1"], ans: 1 },
+        { code: `<span class="keyword">string</span> hero = <span class="string">"อัศวิน"</span>;<br><span class="keyword">string</span> mon = <span class="string">"สไลม์"</span>;<br>Console.WriteLine(<span class="string">"{1} โจมตี {0}"</span>, hero, mon);`, choices: ["อัศวิน โจมตี สไลม์", "สไลม์ โจมตี อัศวิน", "hero โจมตี mon", "{1} โจมตี {0}"], ans: 1 },
+        { code: `<span class="keyword">int</span> atk = 50;<br><span class="keyword">int</span> def = 20;<br>Console.WriteLine(<span class="string">"ป้องกัน {1} โจมตี {0}"</span>, atk, def);`, choices: ["ป้องกัน 50 โจมตี 20", "ป้องกัน 20 โจมตี 50", "ป้องกัน def โจมตี atk", "ป้องกัน 0 โจมตี 1"], ans: 1 },
+        { code: `<span class="keyword">string</span> w1 = <span class="string">"ไฟ"</span>;<br><span class="keyword">string</span> w2 = <span class="string">"น้ำ"</span>;<br>Console.WriteLine(<span class="string">"{1} ดับ {0}"</span>, w1, w2);`, choices: ["ไฟ ดับ น้ำ", "น้ำ ดับ ไฟ", "w1 ดับ w2", "w2 ดับ w1"], ans: 1 },
+        { code: `<span class="keyword">string</span> first = <span class="string">"ที่หนึ่ง"</span>;<br><span class="keyword">string</span> last = <span class="string">"ที่โหล่"</span>;<br>Console.WriteLine(<span class="string">"ฉันสอบได้ {1} ไม่ใช่ {0}"</span>, first, last);`, choices: ["ฉันสอบได้ ที่หนึ่ง ไม่ใช่ ที่โหล่", "ฉันสอบได้ ที่โหล่ ไม่ใช่ ที่หนึ่ง", "ฉันสอบได้ first ไม่ใช่ last", "ฉันสอบได้ 1 ไม่ใช่ 0"], ans: 1 },
+        { code: `<span class="keyword">int</span> hp = 0;<br><span class="keyword">string</span> st = <span class="string">"ตาย"</span>;<br>Console.WriteLine(<span class="string">"สถานะ: {1} (HP: {0})"</span>, hp, st);`, choices: ["สถานะ: 0 (HP: ตาย)", "สถานะ: ตาย (HP: 0)", "สถานะ: st (HP: hp)", "สถานะ: hp (HP: st)"], ans: 1 },
+        { code: `<span class="keyword">string</span> day = <span class="string">"วันจันทร์"</span>;<br><span class="keyword">string</span> mood = <span class="string">"ง่วง"</span>;<br>Console.WriteLine(<span class="string">"{1}จังเลย วันนี้{0}"</span>, day, mood);`, choices: ["วันจันทร์จังเลย วันนี้ง่วง", "ง่วงจังเลย วันนี้วันจันทร์", "moodจังเลย วันนี้day", "ง่วงจังเลย วันนี้ง่วง"], ans: 1 },
+        { code: `<span class="keyword">int</span> min = 1;<br><span class="keyword">int</span> max = 100;<br>Console.WriteLine(<span class="string">"จาก {1} ถึง {0}"</span>, max, min);`, choices: ["จาก 100 ถึง 1", "จาก 1 ถึง 100", "จาก max ถึง min", "จาก min ถึง max"], ans: 1 },
+        { code: `<span class="keyword">string</span> t1 = <span class="string">"Start"</span>;<br><span class="keyword">string</span> t2 = <span class="string">"End"</span>;<br>Console.WriteLine(<span class="string">"{1} Game {0}"</span>, t2, t1);`, choices: ["Start Game End", "End Game Start", "t1 Game t2", "Start Game Start"], ans: 0 },
+        { code: `<span class="keyword">string</span> s = <span class="string">"วิ่ง"</span>;<br>Console.WriteLine(<span class="string">"{0} {0} {0}"</span>, s);`, choices: ["วิ่ง", "วิ่ง วิ่ง", "วิ่ง วิ่ง วิ่ง", "s s s"], ans: 2 },
+        { code: `<span class="keyword">string</span> a = <span class="string">"รัก"</span>;<br><span class="keyword">string</span> b = <span class="string">"เกลียด"</span>;<br>Console.WriteLine(<span class="string">"ฉัน {0} เธอ ไม่ได้ {0} เธอ"</span>, a, b);`, choices: ["ฉัน รัก เธอ ไม่ได้ เกลียด เธอ", "ฉัน เกลียด เธอ ไม่ได้ รัก เธอ", "ฉัน รัก เธอ ไม่ได้ รัก เธอ", "Error"], ans: 2 },
+        { code: `<span class="keyword">int</span> num = 5;<br>Console.WriteLine(<span class="string">"เลข {0} {0} {0} 555"</span>, num);`, choices: ["เลข 5 5 5 555", "เลข 555 555", "เลข num num 555", "เลข 0 0 0 555"], ans: 0 },
+        { code: `<span class="keyword">string</span> sound = <span class="string">"ปัง!"</span>;<br>Console.WriteLine(<span class="string">"ยิงปืนดัง {0}{0}"</span>, sound);`, choices: ["ยิงปืนดัง ปัง! ปัง!", "ยิงปืนดัง ปัง!ปัง!", "ยิงปืนดัง {0}{0}", "ยิงปืนดัง sound sound"], ans: 1 },
+        { code: `<span class="keyword">string</span> me = <span class="string">"ฉัน"</span>;<br><span class="keyword">string</span> you = <span class="string">"เธอ"</span>;<br>Console.WriteLine(<span class="string">"{1} คิดถึง {1}"</span>, me, you);`, choices: ["ฉัน คิดถึง เธอ", "เธอ คิดถึง ฉัน", "ฉัน คิดถึง ฉัน", "เธอ คิดถึง เธอ"], ans: 3 },
+        { code: `<span class="keyword">int</span> a = 1;<br><span class="keyword">int</span> b = 2;<br><span class="keyword">int</span> c = 3;<br>Console.WriteLine(<span class="string">"{2} {2}"</span>, a, b, c);`, choices: ["1 1", "2 2", "3 3", "1 2 3"], ans: 2 },
+        { code: `<span class="keyword">string</span> word = <span class="string">"Ha"</span>;<br>Console.WriteLine(<span class="string">"{0}{0}{0}"</span>, word);`, choices: ["Ha Ha Ha", "HaHaHa", "wordwordword", "{0}{0}{0}"], ans: 1 },
+        { code: `<span class="keyword">string</span> c1 = <span class="string">"ดำ"</span>;<br><span class="keyword">string</span> c2 = <span class="string">"ขาว"</span>;<br>Console.WriteLine(<span class="string">"ม้าลายสี{0}{1}{0}"</span>, c1, c2);`, choices: ["ม้าลายสีดำขาวขาว", "ม้าลายสีขาวดำขาว", "ม้าลายสีดำขาวดำ", "ม้าลายสีดำดำขาว"], ans: 2 },
+        { code: `<span class="keyword">int</span> n1 = 10;<br><span class="keyword">int</span> n2 = 20;<br>Console.WriteLine(<span class="string">"ผลลัพธ์คือ {0}"</span>, n2, n1);`, choices: ["ผลลัพธ์คือ 10", "ผลลัพธ์คือ 20", "ผลลัพธ์คือ 10 20", "ผลลัพธ์คือ 20 10"], ans: 1 },
+        { code: `<span class="keyword">string</span> text = <span class="string">"ซ้ำ"</span>;<br>Console.WriteLine(<span class="string">"พูด {0} อีกครั้ง {0}"</span>, text);`, choices: ["พูด ซ้ำ อีกครั้ง", "พูด อีกครั้ง ซ้ำ", "พูด ซ้ำ อีกครั้ง ซ้ำ", "พูด text อีกครั้ง text"], ans: 2 },
+        { code: `<span class="keyword">string</span> name = <span class="string">"มาริโอ้"</span>;<br>Console.WriteLine($<span class="string">"สวัสดี {name}"</span>);`, choices: ["สวัสดี {0}", "สวัสดี {name}", "สวัสดี มาริโอ้", "สวัสดี name"], ans: 2 },
+        { code: `<span class="keyword">int</span> hp = 100;<br>Console.WriteLine($<span class="string">"พลังชีวิต: {hp}"</span>);`, choices: ["พลังชีวิต: {0}", "พลังชีวิต: hp", "พลังชีวิต: 100", "พลังชีวิต: {hp}"], ans: 2 },
+        { code: `<span class="keyword">string</span> food = <span class="string">"พิซซ่า"</span>;<br>Console.WriteLine($<span class="string">"ฉันอยากกิน{food}"</span>);`, choices: ["ฉันอยากกิน พิซซ่า", "ฉันอยากกินพิซซ่า", "ฉันอยากกิน{food}", "ฉันอยากกินfood"], ans: 1 },
+        { code: `<span class="keyword">int</span> atk = 99;<br><span class="keyword">string</span> weapon = <span class="string">"ขวาน"</span>;<br>Console.WriteLine($<span class="string">"ใช้{weapon} โจมตี {atk}"</span>);`, choices: ["ใช้ขวาน โจมตี 99", "ใช้{weapon} โจมตี {atk}", "ใช้ ขวาน โจมตี 99", "ใช้weapon โจมตี atk"], ans: 0 },
+        { code: `<span class="keyword">string</span> a = <span class="string">"กล้วย"</span>;<br><span class="keyword">string</span> b = <span class="string">"ส้ม"</span>;<br>Console.WriteLine($<span class="string">"มี {b} และ {a}"</span>);`, choices: ["มี กล้วย และ ส้ม", "มี ส้ม และ กล้วย", "มี a และ b", "มี b และ a"], ans: 1 },
+        { code: `<span class="keyword">int</span> coin = 50;<br>Console.WriteLine($<span class="string">"คุณมี {coin} เหรียญ"</span>);`, choices: ["คุณมี coin เหรียญ", "คุณมี 50 เหรียญ", "คุณมี {0} เหรียญ", "คุณมี {coin} เหรียญ"], ans: 1 },
+        { code: `<span class="keyword">string</span> pet1 = <span class="string">"แมว"</span>;<br><span class="keyword">string</span> pet2 = <span class="string">"ปลา"</span>;<br>Console.WriteLine($<span class="string">"{pet1} กิน {pet2}"</span>);`, choices: ["ปลา กิน แมว", "แมว กิน ปลา", "pet1 กิน pet2", "{0} กิน {1}"], ans: 1 },
+        { code: `<span class="keyword">string</span> msg = <span class="string">"Game Over"</span>;<br>Console.WriteLine($<span class="string">"สถานะ: {msg}!"</span>);`, choices: ["สถานะ: Game Over!", "สถานะ: {msg}!", "สถานะ: msg!", "สถานะ: {0}!"], ans: 0 },
+        { code: `<span class="keyword">string</span> color = <span class="string">"ฟ้า"</span>;<br>Console.WriteLine($<span class="string">"ท้องฟ้าสี{color}"</span>);`, choices: ["ท้องฟ้าสี color", "ท้องฟ้าสี ฟ้า", "ท้องฟ้าสีฟ้า", "ท้องฟ้าสี{color}"], ans: 2 },
+        { code: `<span class="keyword">string</span> w = <span class="string">"ฝนตก"</span>;<br>Console.WriteLine($<span class="string">"วันนี้ {w} หนักมาก"</span>);`, choices: ["วันนี้ ฝนตก หนักมาก", "วันนี้ {w} หนักมาก", "วันนี้ w หนักมาก", "วันนี้ ฝนตกหนักมาก"], ans: 0 },
+        { code: `<span class="keyword">int</span> x = 5;<br><span class="keyword">int</span> y = 5;<br>Console.WriteLine($<span class="string">"{x} + {y} = {x + y}"</span>);`, choices: ["5 + 5 = 10", "x + y = 10", "5 + 5 = {x + y}", "5 + 5 = x + y"], ans: 0 },
+        { code: `<span class="keyword">int</span> a = 10;<br>Console.WriteLine(<span class="string">"10 * 2 = {0}"</span>, a * 2);`, choices: ["10 * 2 = 10", "10 * 2 = a * 2", "10 * 2 = 20", "10 * 2 = {0}"], ans: 2 },
+        { code: `<span class="keyword">int</span> hp = 100;<br><span class="keyword">int</span> dmg = 20;<br>Console.WriteLine($<span class="string">"HP เหลือ {hp - dmg}"</span>);`, choices: ["HP เหลือ hp - dmg", "HP เหลือ 100 - 20", "HP เหลือ 80", "HP เหลือ {80}"], ans: 2 },
+        { code: `<span class="keyword">string</span> n = <span class="string">"บอส"</span>;<br><span class="keyword">int</span> lvl = 50;<br>Console.WriteLine(<span class="string">"{0} เลเวล {1+5}"</span>, n, lvl);`, choices: ["บอส เลเวล 50+5", "บอส เลเวล 55", "n เลเวล 55", "บอส เลเวล {1+5}"], ans: 1 },
+        { code: `<span class="keyword">int</span> num = 3;<br>Console.WriteLine($<span class="string">"คุณมีของ {num} ชิ้น ซื้อเพิ่ม 1 เป็น {num + 1} ชิ้น"</span>);`, choices: ["คุณมีของ 3 ชิ้น ซื้อเพิ่ม 1 เป็น 4 ชิ้น", "คุณมีของ 3 ชิ้น ซื้อเพิ่ม 1 เป็น 3+1 ชิ้น", "คุณมีของ 3 ชิ้น ซื้อเพิ่ม 1 เป็น num+1 ชิ้น", "คุณมีของ {num} ชิ้น ซื้อเพิ่ม 1 เป็น 4 ชิ้น"], ans: 0 },
+        { code: `<span class="keyword">int</span> x = 10;<br>Console.WriteLine(<span class="string">"{0} เท่ากับ {0}"</span>, x + 5);`, choices: ["10 เท่ากับ 10", "15 เท่ากับ 15", "x + 5 เท่ากับ x + 5", "15 เท่ากับ 10"], ans: 1 },
+        { code: `<span class="keyword">string</span> str1 = <span class="string">"C"</span>;<br><span class="keyword">string</span> str2 = <span class="string">"#"</span>;<br>Console.WriteLine($<span class="string">"ฉันเขียน {str1}{str2}"</span>);`, choices: ["ฉันเขียน C #", "ฉันเขียน C#", "ฉันเขียน {str1}{str2}", "ฉันเขียน str1str2"], ans: 1 },
+        { code: `<span class="keyword">int</span> x = 10;<br>Console.WriteLine($<span class="string">"โบนัส! {x * 10} แต้ม"</span>);`, choices: ["โบนัส! 10 * 10 แต้ม", "โบนัส! x * 10 แต้ม", "โบนัส! 100 แต้ม", "โบนัส! {100} แต้ม"], ans: 2 },
+        { code: `<span class="keyword">int</span> a = 2;<br><span class="keyword">int</span> b = 4;<br>Console.WriteLine(<span class="string">"{1} ลบ {0} เหลือ {2}"</span>, a, b, b - a);`, choices: ["4 ลบ 2 เหลือ 2", "2 ลบ 4 เหลือ 2", "b ลบ a เหลือ b-a", "4 ลบ 2 เหลือ {2}"], ans: 0 },
+        { code: `<span class="keyword">string</span> w = <span class="string">"รหัส"</span>;<br><span class="keyword">int</span> p = 1234;<br>Console.WriteLine($<span class="string">"{w}: {p}"</span>);`, choices: ["รหัส: 1234", "w: p", "{w}: {p}", "รหัส: p"], ans: 0 }
+    ];
+    let s2 = 0, l2 = 3, curQ2 = {};
+
+    function startGame2() {
+        s2 = 0; l2 = 3;
+        document.getElementById('score2').innerText = s2;
+        document.getElementById('lives2').innerText = l2;
+        document.getElementById('g2-screen').style.display = 'block';
+        document.getElementById('g2-over').style.display = 'none';
+        nextQ2();
+    }
+
+    function nextQ2() {
+        curQ2 = q2[Math.floor(Math.random() * q2.length)];
+        document.getElementById('code-box2').innerHTML = curQ2.code;
+        let grid = document.getElementById('choices-grid2');
+        grid.innerHTML = '';
+        curQ2.choices.forEach((choice, index) => {
+            let btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.innerText = (index + 1) + ". " + choice;
+            btn.onclick = () => checkAnswer2(index, btn);
+            grid.appendChild(btn);
+        });
+    }
+
+    function checkAnswer2(idx, btn) {
+        let btns = document.querySelectorAll('#choices-grid2 .choice-btn');
+        btns.forEach(b => b.disabled = true);
+        if (idx === curQ2.ans) {
+            s2 += 10; btn.style.backgroundColor = '#2a9d8f'; setTimeout(nextQ2, 800);
+        } else {
+            l2 -= 1; btn.style.backgroundColor = '#d00000';
+            btns[curQ2.ans].style.backgroundColor = '#2a9d8f';
+            if (l2 <= 0) setTimeout(end2, 1000); else setTimeout(nextQ2, 1200);
+        }
+        document.getElementById('score2').innerText = s2;
+        document.getElementById('lives2').innerText = l2;
+    }
+
+    function end2() {
+        document.getElementById('g2-screen').style.display = 'none';
+        document.getElementById('g2-over').style.display = 'block';
+        document.getElementById('final-score2').innerText = s2;
+    }
+
+    // ================= โลจิกเกมที่ 3 (50 ภารกิจ) =================
+    const levels3 = [
+        { mission: "สร้างตัวแปรชื่อ age เพื่อเก็บอายุ 18 ปี", correct: ["int", "age", "=", "18", ";"], pool: ["int", "age", "=", "18", ";", "string", '"18"', "float"] },
+        { mission: "สร้างตัวแปรชื่อ hp เพื่อเก็บพลังชีวิต 100", correct: ["int", "hp", "=", "100", ";"], pool: ["int", "hp", "=", "100", ";", "float", "100.0f", "char"] },
+        { mission: "สร้างตัวแปรชื่อ score เก็บค่า 0", correct: ["int", "score", "=", "0", ";"], pool: ["int", "score", "=", "0", ";", "float", '"0"', "'0'"] },
+        { mission: "สร้างตัวแปรชื่อ year เก็บปี 2026", correct: ["int", "year", "=", "2026", ";"], pool: ["int", "year", "=", "2026", ";", "string", '"2026"'] },
+        { mission: "สร้างตัวแปรชื่อ money เก็บเงิน 5000", correct: ["int", "money", "=", "5000", ";"], pool: ["int", "money", "=", "5000", ";", "5000f", '"5000"'] },
+        { mission: "สร้างตัวแปรชื่อ level เก็บเลเวล 99", correct: ["int", "level", "=", "99", ";"], pool: ["int", "level", "=", "99", ";", "string", "'99'"] },
+        { mission: "สร้างตัวแปรชื่อ temp เก็บอุณหภูมิติดลบ -5", correct: ["int", "temp", "=", "-5", ";"], pool: ["int", "temp", "=", "-5", ";", "float", "-5.0f"] },
+        { mission: "สร้างตัวแปรชื่อ day เก็บวันที่ 7", correct: ["int", "day", "=", "7", ";"], pool: ["int", "day", "=", "7", ";", "'7'", '"7"'] },
+        { mission: "สร้างตัวแปรชื่อ month เก็บเดือน 12", correct: ["int", "month", "=", "12", ";"], pool: ["int", "month", "=", "12", ";", "string", "12f"] },
+        { mission: "สร้างตัวแปรชื่อ max เก็บค่าสูงสุด 999", correct: ["int", "max", "=", "999", ";"], pool: ["int", "max", "=", "999", ";", "float", '"999"'] },
+        { mission: "สร้างตัวแปรชื่อ name เก็บคำว่า Hero", correct: ["string", "name", "=", '"Hero"', ";"], pool: ["string", "name", "=", '"Hero"', ";", "char", "'Hero'", "int"] },
+        { mission: "สร้างตัวแปรชื่อ city เก็บคำว่า BKK", correct: ["string", "city", "=", '"BKK"', ";"], pool: ["string", "city", "=", '"BKK"', ";", "char", "'BKK'"] },
+        { mission: "สร้างตัวแปรชื่อ color เก็บคำว่า Red", correct: ["string", "color", "=", '"Red"', ";"], pool: ["string", "color", "=", '"Red"', ";", "int", "Red"] },
+        { mission: "สร้างตัวแปรชื่อ food เก็บคำว่า Pizza", correct: ["string", "food", "=", '"Pizza"', ";"], pool: ["string", "food", "=", '"Pizza"', ";", "'Pizza'", "float"] },
+        { mission: "สร้างตัวแปรชื่อ pet เก็บคำว่า Cat", correct: ["string", "pet", "=", '"Cat"', ";"], pool: ["string", "pet", "=", '"Cat"', ";", "char", "'Cat'"] },
+        { mission: "สร้างตัวแปรชื่อ status เก็บคำว่า OK", correct: ["string", "status", "=", '"OK"', ";"], pool: ["string", "status", "=", '"OK"', ";", "int", "'OK'"] },
+        { mission: "สร้างตัวแปรชื่อ job เก็บคำว่า Dev", correct: ["string", "job", "=", '"Dev"', ";"], pool: ["string", "job", "=", '"Dev"', ";", "char", '"dev"'] },
+        { mission: "สร้างตัวแปรชื่อ player เก็บคำว่า P1", correct: ["string", "player", "=", '"P1"', ";"], pool: ["string", "player", "=", '"P1"', ";", "'P1'", "P1"] },
+        { mission: "สร้างตัวแปรชื่อ item เก็บคำว่า Sword", correct: ["string", "item", "=", '"Sword"', ";"], pool: ["string", "item", "=", '"Sword"', ";", "char", "Sword"] },
+        { mission: "สร้างตัวแปรชื่อ rank เก็บคำว่า Gold", correct: ["string", "rank", "=", '"Gold"', ";"], pool: ["string", "rank", "=", '"Gold"', ";", "'Gold'", "int"] },
+        { mission: "สร้างตัวแปรชื่อ numStr เก็บข้อความ 123", correct: ["string", "numStr", "=", '"123"', ";"], pool: ["string", "numStr", "=", '"123"', ";", "int", "123"] },
+        { mission: "สร้างตัวแปรชื่อ fakeBool เก็บข้อความ true", correct: ["string", "fakeBool", "=", '"true"', ";"], pool: ["string", "fakeBool", "=", '"true"', ";", "bool", "true"] },
+        { mission: "สร้างตัวแปรชื่อ blank เก็บข้อความว่างเปล่า", correct: ["string", "blank", "=", '""', ";"], pool: ["string", "blank", "=", '""', ";", "''", "char"] },
+        { mission: "สร้างตัวแปรชื่อ pi เก็บค่า 3.14", correct: ["float", "pi", "=", "3.14f", ";"], pool: ["float", "pi", "=", "3.14f", ";", "int", "3.14", '"3.14f"'] },
+        { mission: "สร้างตัวแปรชื่อ weight เก็บค่า 55.5", correct: ["float", "weight", "=", "55.5f", ";"], pool: ["float", "weight", "=", "55.5f", ";", "int", '"55.5f"'] },
+        { mission: "สร้างตัวแปรชื่อ speed เก็บค่า 1.5", correct: ["float", "speed", "=", "1.5f", ";"], pool: ["float", "speed", "=", "1.5f", ";", "1.5", "string"] },
+        { mission: "สร้างตัวแปรชื่อ price เก็บค่า 99.99", correct: ["float", "price", "=", "99.99f", ";"], pool: ["float", "price", "=", "99.99f", ";", "int", "99.99"] },
+        { mission: "สร้างตัวแปรชื่อ g เก็บค่าแรงโน้มถ่วง 9.8", correct: ["float", "g", "=", "9.8f", ";"], pool: ["float", "g", "=", "9.8f", ";", "9.8", '"9.8"'] },
+        { mission: "สร้างตัวแปรชื่อ rate เก็บค่า 0.5", correct: ["float", "rate", "=", "0.5f", ";"], pool: ["float", "rate", "=", "0.5f", ";", "int", "0.5"] },
+        { mission: "สร้างตัวแปรชื่อ tax เก็บค่า 0.07", correct: ["float", "tax", "=", "0.07f", ";"], pool: ["float", "tax", "=", "0.07f", ";", '"0.07"', "0.07"] },
+        { mission: "สร้างตัวแปรชื่อ zero เก็บค่าทศนิยม 0.0", correct: ["float", "zero", "=", "0.0f", ";"], pool: ["float", "zero", "=", "0.0f", ";", "int", "0"] },
+        { mission: "สร้างตัวแปรชื่อ one เก็บค่าทศนิยม 1.0", correct: ["float", "one", "=", "1.0f", ";"], pool: ["float", "one", "=", "1.0f", ";", "1.0", "int"] },
+        { mission: "สร้างตัวแปรชื่อ minus เก็บค่าทศนิยมติดลบ -1.5", correct: ["float", "minus", "=", "-1.5f", ";"], pool: ["float", "minus", "=", "-1.5f", ";", "-1.5", "string"] },
+        { mission: "สร้างตัวแปรชื่อ grade เก็บเกรด A", correct: ["char", "grade", "=", "'A'", ";"], pool: ["char", "grade", "=", "'A'", ";", "string", '"A"'] },
+        { mission: "สร้างตัวแปรชื่อ yesNo เก็บตัวอักษร Y", correct: ["char", "yesNo", "=", "'Y'", ";"], pool: ["char", "yesNo", "=", "'Y'", ";", '"Y"', "string"] },
+        { mission: "สร้างตัวแปรชื่อ symbol เก็บเครื่องหมาย #", correct: ["char", "symbol", "=", "'#'", ";"], pool: ["char", "symbol", "=", "'#'", ";", '"#"', "int"] },
+        { mission: "สร้างตัวแปรชื่อ dot เก็บเครื่องหมายจุด", correct: ["char", "dot", "=", "'.'", ";"], pool: ["char", "dot", "=", "'.'", ";", '"."', "float"] },
+        { mission: "สร้างตัวแปรชื่อ comma เก็บเครื่องหมายลูกน้ำ", correct: ["char", "comma", "=", "','", ";"], pool: ["char", "comma", "=", "','", ";", '","', "string"] },
+        { mission: "สร้างตัวแปรชื่อ dash เก็บเครื่องหมายขีดลบ", correct: ["char", "dash", "=", "'-'", ";"], pool: ["char", "dash", "=", "'-'", ";", '"-"', "int"] },
+        { mission: "สร้างตัวแปรชื่อ plus เก็บเครื่องหมายบวก", correct: ["char", "plus", "=", "'+'", ";"], pool: ["char", "plus", "=", "'+'", ";", '"+"', "float"] },
+        { mission: "สร้างตัวแปรชื่อ star เก็บเครื่องหมายดาว", correct: ["char", "star", "=", "'*'", ";"], pool: ["char", "star", "=", "'*'", ";", '"*"', "string"] },
+        { mission: "สร้างตัวแปรชื่อ slash เก็บเครื่องหมายทับ", correct: ["char", "slash", "=", "'/'", ";"], pool: ["char", "slash", "=", "'/'", ";", '"/"', "char"] },
+        { mission: "สร้างตัวแปรชื่อ question เก็บเครื่องหมาย ?", correct: ["char", "question", "=", "'?'", ";"], pool: ["char", "question", "=", "'?'", ";", '"?"', "string"] },
+        { mission: "สร้างตัวแปรชื่อ numChar เก็บตัวเลข 9 ในรูปอักขระ", correct: ["char", "numChar", "=", "'9'", ";"], pool: ["char", "numChar", "=", "'9'", ";", "int", "9"] },
+        { mission: "สร้างตัวแปรชื่อ space เก็บการเคาะช่องว่าง 1 ครั้ง", correct: ["char", "space", "=", "' '", ";"], pool: ["char", "space", "=", "' '", ";", "string", '" "'] },
+        { mission: "สร้างตัวแปรชื่อ text เก็บข้อความคำว่า int", correct: ["string", "text", "=", '"int"', ";"], pool: ["string", "text", "=", '"int"', ";", "int", "'int'"] },
+        { mission: "สร้างตัวแปรชื่อ letter เก็บอักขระตัว f", correct: ["char", "letter", "=", "'f'", ";"], pool: ["char", "letter", "=", "'f'", ";", "float", '"f"'] },
+        { mission: "สร้างตัวแปรชื่อ number เก็บจำนวนเต็ม -99", correct: ["int", "number", "=", "-99", ";"], pool: ["int", "number", "=", "-99", ";", "float", "-99.0f", '"-99"'] },
+        { mission: "สร้างตัวแปรชื่อ word เก็บข้อความ 3.14f", correct: ["string", "word", "=", '"3.14f"', ";"], pool: ["string", "word", "=", '"3.14f"', ";", "float", "3.14f"] },
+        { mission: "สร้างตัวแปรชื่อ val เก็บค่าทศนิยม 100.0", correct: ["float", "val", "=", "100.0f", ";"], pool: ["float", "val", "=", "100.0f", ";", "int", "100", '"100.0f"'] }
+    ];
+    let curLv3 = 0, selWords = [], poolWords = [];
+
+    function loadLevel3() {
+        if (curLv3 >= levels3.length) {
+            document.getElementById('mission-text3').innerText = "🎉 จบเกม! คุณเคลียร์ภารกิจครบ 50 ข้อแล้ว!";
+            document.getElementById('drop-zone').innerHTML = "";
+            document.getElementById('word-pool').innerHTML = "";
+            document.querySelector('.btn-check').style.display = 'none';
+            return;
+        }
+        let data = levels3[curLv3];
+        document.getElementById('mission-text3').innerText = `ภารกิจที่ ${curLv3 + 1}: ${data.mission}`;
+        document.getElementById('feedback3').innerText = "";
+        selWords = [];
+        poolWords = [...data.pool].sort(() => Math.random() - 0.5);
+        renderBlocks3();
+    }
+
+    function renderBlocks3() {
+        let dz = document.getElementById('drop-zone');
+        let wp = document.getElementById('word-pool');
+        dz.innerHTML = ""; wp.innerHTML = "";
+        
+        selWords.forEach((w, i) => {
+            let b = document.createElement('div'); b.className = 'word-block'; b.innerText = w;
+            b.onclick = () => { poolWords.push(selWords.splice(i, 1)[0]); renderBlocks3(); };
+            dz.appendChild(b);
+        });
+        
+        poolWords.forEach((w, i) => {
+            let b = document.createElement('div'); b.className = 'word-block'; b.innerText = w;
+            b.onclick = () => { selWords.push(poolWords.splice(i, 1)[0]); renderBlocks3(); };
+            wp.appendChild(b);
+        });
+    }
+
+    function checkAnswer3() {
+        let data = levels3[curLv3];
+        let fb = document.getElementById('feedback3');
+        if (selWords.join("") === data.correct.join("")) {
+            fb.innerText = "✅ ถูกต้อง!"; fb.className = "correct";
+            setTimeout(() => { curLv3++; loadLevel3(); }, 1200);
+        } else {
+            fb.innerText = "❌ ยังไม่ถูก ลองใหม่!"; fb.className = "wrong";
+        }
+    }
+
+    // ================= เริ่มทำงานเมื่อโหลดหน้าเว็บ =================
+    window.onload = function() {
+        document.querySelector('.tab-link.active').style.backgroundColor = "#e94560";
+        
+        // สับไพ่ข้อสอบสำหรับเกม 1 และ 2 ก่อนเริ่ม
+        q1.sort(() => Math.random() - 0.5);
+        q2.sort(() => Math.random() - 0.5);
+        
+        startGame1();
+        startGame2();
+        
+        // สับไพ่โจทย์และเริ่มเกม 3
+        levels3.sort(() => Math.random() - 0.5);
+        loadLevel3();
+    };
+</script>
+
+</body>
+</html>
