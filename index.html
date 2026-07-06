@@ -82,6 +82,7 @@
         .g1-container { background-color: #16213e; }
         .g1-container h1 { color: #e94560; margin-top: 0;}
         #question-box1 { background-color: #0f3460; padding: 40px 20px; border-radius: 15px; font-size: 40px; font-family: monospace; font-weight: bold; margin-bottom: 30px; border: 3px solid #e94560; }
+        #c2-question-box1 { background-color: #0f3460; padding: 40px 20px; border-radius: 15px; font-size: 32px; font-family: 'Kanit', sans-serif; font-weight: bold; margin-bottom: 30px; border: 3px solid #e94560; }
         .btn-grid1 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
         .type-btn { font-family: 'Kanit', sans-serif; font-size: 24px; font-weight: bold; padding: 15px; border: none; border-radius: 10px; cursor: pointer; color: white; transition: 0.1s;}
         .type-btn:active { transform: scale(0.95); }
@@ -92,6 +93,7 @@
         .g2-container { background-color: #8d99ae; color: #2b2d42;}
         .g2-container h1 { color: #2b2d42; margin-top: 0;}
         #code-box2 { background-color: #edf2f4; padding: 25px 20px; border-radius: 10px; font-size: 20px; font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-bottom: 25px; text-align: left; border-left: 8px solid #ef233c; line-height: 1.6; }
+        #c2-code-box3 { background-color: #edf2f4; padding: 25px 20px; border-radius: 10px; font-size: 28px; font-family: 'Courier New', Courier, monospace; font-weight: bold; margin-bottom: 25px; text-align: left; border-left: 8px solid #ef233c; line-height: 1.6; }
         .keyword { color: #0000ff; } .string { color: #a31515; }
         .btn-grid2 { display: grid; grid-template-columns: 1fr; gap: 15px; }
         .choice-btn { font-family: 'Kanit', sans-serif; font-size: 18px; font-weight: bold; padding: 15px; border: none; border-radius: 10px; cursor: pointer; background-color: #ef233c; color: white; text-align: left; }
@@ -101,76 +103,479 @@
         .g3-container { background-color: #2b2d42; }
         .g3-container h1 { color: #fb8500; margin-top: 0;}
         .mission-box { background-color: #ffb703; color: #023047; padding: 15px; border-radius: 10px; font-size: 22px; font-weight: bold; margin-bottom: 20px; }
-        #drop-zone { background-color: #023047; min-height: 80px; border: 3px dashed #fb8500; border-radius: 10px; margin-bottom: 20px; display: flex; flex-wrap: wrap; align-items: center; padding: 15px; gap: 10px; }
-        #word-pool { background-color: #8ecaed; padding: 20px; border-radius: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; }
+        #drop-zone, #c2-drop-zone { background-color: #023047; min-height: 80px; border: 3px dashed #fb8500; border-radius: 10px; margin-bottom: 20px; display: flex; flex-wrap: wrap; align-items: center; padding: 15px; gap: 10px; }
+        #word-pool, #c2-word-pool { background-color: #8ecaed; padding: 20px; border-radius: 10px; display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-bottom: 20px; }
         .word-block { background-color: #219ebc; color: white; padding: 10px 20px; border-radius: 8px; font-size: 20px; font-family: monospace; font-weight: bold; cursor: pointer; user-select: none; box-shadow: 0 4px 0 #023047; }
         .word-block:active { transform: translateY(4px); box-shadow: 0 0 0 #023047; }
         .btn-check { background-color: #fb8500; color: white; font-size: 22px; padding: 12px 40px; border: none; border-radius: 30px; cursor: pointer; font-family: 'Kanit', sans-serif; font-weight: bold; box-shadow: 0 5px 0 #d00000; }
-        #feedback3 { margin-top: 20px; font-size: 24px; font-weight: bold; min-height: 36px; }
+        #feedback3, #c2-feedback3 { margin-top: 20px; font-size: 24px; font-weight: bold; min-height: 36px; }
         .correct { color: #52b788; } .wrong { color: #e63946; }
+
+        /* --- ระบบเป้าหมายและ Victory Modal --- */
+        .chapter-progress-bar {
+            background-color: #023047;
+            color: #ffb703;
+            padding: 12px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            border: 2px solid #ffb703;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal-content {
+            background-color: #1a1a2e;
+            border: 3px solid #ffb703;
+            border-radius: 20px;
+            padding: 40px;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            color: white;
+            font-family: 'Kanit', sans-serif;
+            animation: modalFadeIn 0.4s ease-out;
+        }
+        .modal-score-summary {
+            background-color: #16213e;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: left;
+            margin: 20px 0;
+            border: 1px solid #0f3460;
+        }
+        .score-row {
+            display: flex;
+            justify-content: space-between;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        @keyframes modalFadeIn {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .max-score-screen {
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background-color: #1a1a2e;
+            border: 2px dashed #2a9d8f;
+            border-radius: 15px;
+            padding: 40px 20px;
+            width: 100%;
+            max-width: 600px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+            margin: auto;
+            align-self: center;
+        }
+        .max-score-screen h2 {
+            color: #2a9d8f;
+            font-size: 28px;
+            margin-bottom: 15px;
+            margin-top: 0;
+        }
+        .max-score-screen p {
+            font-size: 18px;
+            color: #e0e0e0;
+            line-height: 1.5;
+            margin: 0;
+        }
+
+        /* --- ระบบ Chapter Menu --- */
+        .menu-view {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            flex-grow: 1;
+            padding: 40px 20px;
+            background: radial-gradient(circle at center, #1b1b2f 0%, #111 70%);
+            min-height: calc(100vh - 80px);
+        }
+        
+        .menu-container {
+            max-width: 800px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        .menu-title {
+            font-size: 42px;
+            font-weight: 800;
+            margin-bottom: 10px;
+            background: linear-gradient(45deg, #e94560, #fb8500);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 4px 15px rgba(233, 69, 96, 0.2);
+        }
+        
+        .menu-subtitle {
+            font-size: 18px;
+            color: #ccc;
+            margin-bottom: 40px;
+        }
+        
+        .chapter-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+            margin-top: 20px;
+        }
+        
+        .chapter-card {
+            background: linear-gradient(135deg, #1f1f3e 0%, #16162b 100%);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .chapter-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(233, 69, 96, 0.05), transparent);
+            transform: translateX(-100%);
+            transition: 0.5s;
+        }
+        
+        .chapter-card:hover::before {
+            transform: translateX(100%);
+        }
+        
+        .chapter-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(233, 69, 96, 0.15);
+            border-color: rgba(233, 69, 96, 0.4);
+        }
+        
+        .chapter-badge {
+            display: inline-block;
+            background-color: #e94560;
+            color: white;
+            font-size: 14px;
+            font-weight: bold;
+            padding: 5px 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .chapter-name {
+            font-size: 26px;
+            font-weight: 800;
+            margin: 0 0 15px 0;
+            color: #fff;
+        }
+        
+        .chapter-desc {
+            font-size: 16px;
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+        
+        .chapter-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding-top: 15px;
+            font-size: 14px;
+            color: #888;
+        }
+        
+        .btn-enter {
+            color: #fb8500;
+            font-weight: bold;
+            transition: 0.2s;
+        }
+        
+        .chapter-card:hover .btn-enter {
+            color: #ffb703;
+            transform: translateX(5px);
+        }
+        
+        /* --- หน้ามุมมอง Chapter --- */
+        .chapter-view {
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
+        }
+        
+        .back-nav {
+            background-color: #1a1a1a;
+            padding: 15px 20px;
+            border-bottom: 1px solid #222;
+            display: flex;
+            align-items: center;
+        }
+        
+        .btn-back {
+            background: none;
+            border: 1px solid #444;
+            color: #ccc;
+            padding: 8px 16px;
+            font-size: 16px;
+            font-family: 'Kanit', sans-serif;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        
+        .btn-back:hover {
+            background-color: #222;
+            color: white;
+            border-color: #888;
+        }
     </style>
 </head>
 <body>
 
-    <div class="tab-header">
-        <button class="tab-link active" onclick="openTab(event, 'Game1')">🎮 เกม 1: แยกประเภท</button>
-        <button class="tab-link" onclick="openTab(event, 'Game2')">🧩 เกม 2: ถอดรหัส</button>
-        <button class="tab-link" onclick="openTab(event, 'Game3')">🛠️ เกม 3: ประกอบโค้ด</button>
-    </div>
-
-    <div id="Game1" class="tab-content" style="display: flex;">
-        <div class="game-container g1-container" id="g1-screen">
-            <h1>🎮 C# Data Type Sorter</h1>
-            <div class="stats"><div>คะแนน: <span id="score1">0</span></div><div>❤️: <span id="lives1">3</span></div></div>
-            <div id="question-box1">"Ready?"</div>
-            <div class="btn-grid1">
-                <button class="type-btn btn-int" onclick="checkAnswer1('int')">int</button>
-                <button class="type-btn btn-float" onclick="checkAnswer1('float')">float</button>
-                <button class="type-btn btn-char" onclick="checkAnswer1('char')">char</button>
-                <button class="type-btn btn-string" onclick="checkAnswer1('string')">string</button>
+    <!-- Chapter Menu (Default View) -->
+    <div id="ChapterMenu" class="menu-view">
+        <div class="menu-container">
+            <h1 class="menu-title">🚀 C# Mini Game Portal</h1>
+            <p class="menu-subtitle">ฝึกฝนทักษะการเขียนโปรแกรมภาษา C# ผ่านมินิเกมแสนสนุก</p>
+            
+            <div class="chapter-grid">
+                <div class="chapter-card" onclick="enterChapter('Chapter1')">
+                    <div class="chapter-badge">บทเรียนที่ 1</div>
+                    <h2 class="chapter-name">Chapter 1 Variable & Output</h2>
+                    <p class="chapter-desc">ทำความเข้าใจโครงสร้างตัวแปร การกำหนดค่าประเภทข้อมูล การประกอบคำสั่ง และการทำงานของคำสั่งแสดงผลออกทางหน้าจอ</p>
+                    <div class="chapter-meta">
+                        <span>🎮 3 มินิเกมย่อย</span>
+                        <span class="btn-enter">เริ่มต้นเรียนรู้ →</span>
+                    </div>
+                </div>
+                <div class="chapter-card" onclick="enterChapter('Chapter2')">
+                    <div class="chapter-badge">บทเรียนที่ 2</div>
+                    <h2 class="chapter-name">Chapter 2 Operator & Input</h2>
+                    <p class="chapter-desc">เรียนรู้การใช้ตัวดำเนินการคำนวณและตรรกศาสตร์ การจัดลำดับความสำคัญ การแปลงชนิดข้อมูล (Casting) และการรับข้อมูลผ่านคีย์บอร์ด</p>
+                    <div class="chapter-meta">
+                        <span>🎮 3 มินิเกมย่อย</span>
+                        <span class="btn-enter">เริ่มต้นเรียนรู้ →</span>
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="game-container g1-container game-over" id="g1-over">
-            <h2 style="color: #e94560;">Game Over!</h2>
-            <p style="font-size: 24px;">คะแนนรวม: <strong id="final-score1">0</strong></p>
-            <button class="btn-restart" style="background-color: #e94560;" onclick="startGame1()">เล่นอีกครั้ง</button>
+    </div>
+
+    <!-- Chapter 1 View (Hidden by default) -->
+    <div id="Chapter1" class="chapter-view" style="display: none;">
+        <!-- Back Navigation -->
+        <div class="back-nav">
+            <button class="btn-back" onclick="showMainMenu()">← กลับไปที่หน้าหลัก</button>
+        </div>
+
+        <!-- Chapter 1 Progress Bar -->
+        <div style="padding: 10px 20px 0 20px;">
+            <div class="chapter-progress-bar">
+                 🏆 เป้าหมายบทเรียน: คะแนนรวมแต่ละแท็บ <span id="chapter-total-score">0</span> / 30 คะแนน เพื่อเรียนจบ!
+            </div>
+        </div>
+
+        <div class="tab-header">
+            <button class="tab-link active" onclick="openTab(event, 'Game1')">🎮 เกม 1: แยกประเภท</button>
+            <button class="tab-link" onclick="openTab(event, 'Game3')">🛠️ เกม 2: ประกอบโค้ด</button>
+            <button class="tab-link" onclick="openTab(event, 'Game2')">🧩 เกม 3: การแสดงผลออกจอ</button>
+        </div>
+
+        <!-- Chapter 1 - Game 1: Sorter -->
+        <div id="Game1" class="tab-content" style="display: flex;">
+            <div class="game-container g1-container" id="g1-screen">
+                <h1>🎮 C# Data Type Sorter</h1>
+                <div class="stats"><div>คะแนนแท็บนี้: <span id="score1">0</span> คะแนน</div></div>
+                <div id="question-box1">"Ready?"</div>
+                <div class="btn-grid1">
+                    <button class="type-btn btn-int" onclick="checkAnswer1('int')">int</button>
+                    <button class="type-btn btn-float" onclick="checkAnswer1('float')">float</button>
+                    <button class="type-btn btn-char" onclick="checkAnswer1('char')">char</button>
+                    <button class="type-btn btn-string" onclick="checkAnswer1('string')">string</button>
+                </div>
+            </div>
+            <div class="max-score-screen" id="g1-max-score">
+                <h2>🏆 ได้คะแนนเต็ม 10/10 คะแนนแล้ว!</h2>
+                <p>คุณผ่านมินิเกมนี้เรียบร้อยแล้ว กรุณาเลือกเล่นแท็บอื่นด้านบนเพื่อสะสมคะแนนต่อ</p>
+            </div>
+        </div>
+
+        <!-- Chapter 1 - Game 2: Code Builder (Game3 in HTML) -->
+        <div id="Game3" class="tab-content">
+            <div class="game-container g3-container" id="g3-screen">
+                <h1>🛠️ C# Code Builder</h1>
+                <div class="stats"><div>คะแนนแท็บนี้: <span id="score3">0</span> คะแนน</div></div>
+                <div class="mission-box" id="mission-text3">ภารกิจ: โหลดข้อมูล...</div>
+                <div id="drop-zone"></div>
+                <div id="word-pool"></div>
+                <button class="btn-check" onclick="checkAnswer3()">ตรวจคำตอบ!</button>
+                <div id="feedback3"></div>
+            </div>
+            <div class="max-score-screen" id="g3-max-score">
+                <h2>🏆 ได้คะแนนเต็ม 10/10 คะแนนแล้ว!</h2>
+                <p>คุณผ่านมินิเกมนี้เรียบร้อยแล้ว กรุณาเลือกเล่นแท็บอื่นด้านบนเพื่อสะสมคะแนนต่อ</p>
+            </div>
+        </div>
+
+        <!-- Chapter 1 - Game 3: Format Matcher (Game2 in HTML) -->
+        <div id="Game2" class="tab-content">
+            <div class="game-container g2-container" id="g2-screen">
+                <h1>🧩 C# Format Matcher</h1>
+                <div class="stats"><div>คะแนนแท็บนี้: <span id="score2">0</span> คะแนน</div></div>
+                <div id="code-box2">Loading...</div>
+                <div class="btn-grid2" id="choices-grid2"></div>
+            </div>
+            <div class="max-score-screen" id="g2-max-score">
+                <h2>🏆 ได้คะแนนเต็ม 10/10 คะแนนแล้ว!</h2>
+                <p>คุณผ่านมินิเกมนี้เรียบร้อยแล้ว กรุณาเลือกเล่นแท็บอื่นด้านบนเพื่อสะสมคะแนนต่อ</p>
+            </div>
+        </div>
+
+        <!-- Chapter 1 Victory Modal -->
+        <div id="victory-modal" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <h1 style="color: #ffb703; margin-top: 0; font-size: 36px;">🏆 ยินดีด้วย! คุณเรียนจบแล้ว</h1>
+                <p style="font-size: 20px; margin-bottom: 20px;">นี่คือสรุปคะแนนแต่ละด่านของคุณ:</p>
+                <div class="modal-score-summary">
+                    <div class="score-row">🎮 เกม 1: แยกประเภท <span><strong id="final-tab1-score">0</strong> คะแนน</span></div>
+                    <div class="score-row">🛠️ เกม 2: ประกอบโค้ด <span><strong id="final-tab3-score">0</strong> คะแนน</span></div>
+                    <div class="score-row">🧩 เกม 3: การแสดงผลออกจอ <span><strong id="final-tab2-score">0</strong> คะแนน</span></div>
+                    <hr style="border: 1px solid #ffb703; margin: 15px 0;">
+                    <div class="score-row" style="font-size: 24px; color: #ffb703;">คะแนนรวมทั้งหมด: <span><strong id="final-total-score">0</strong> / 30 คะแนน</span></div>
+                </div>
+                <div style="margin-top: 30px;">
+                    <button class="btn-restart" onclick="resetChapter1()" style="background-color: #2a9d8f; font-size: 20px; padding: 12px 30px; margin-right: 15px;">เล่นอีกครั้ง</button>
+                    <button class="btn-restart" onclick="showMainMenu()" style="background-color: #fb8500; font-size: 20px; padding: 12px 30px;">กลับไปหน้าหลัก</button>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="Game2" class="tab-content">
-        <div class="game-container g2-container" id="g2-screen">
-            <h1>🧩 C# Format Matcher</h1>
-            <div class="stats"><div>คะแนน: <span id="score2">0</span></div><div>❤️: <span id="lives2">3</span></div></div>
-            <div id="code-box2">Loading...</div>
-            <div class="btn-grid2" id="choices-grid2"></div>
+    <!-- Chapter 2 View (Hidden by default) -->
+    <div id="Chapter2" class="chapter-view" style="display: none;">
+        <!-- Back Navigation -->
+        <div class="back-nav">
+            <button class="btn-back" onclick="showMainMenu()">← กลับไปที่หน้าหลัก</button>
         </div>
-        <div class="game-container g2-container game-over" id="g2-over">
-            <h2 style="color: #ef233c;">Game Over!</h2>
-            <p style="font-size: 24px;">คะแนนของคุณคือ: <strong id="final-score2">0</strong></p>
-            <button class="btn-restart" style="background-color: #ef233c;" onclick="startGame2()">เล่นอีกครั้ง</button>
-        </div>
-    </div>
 
-    <div id="Game3" class="tab-content">
-        <div class="game-container g3-container">
-            <h1>🛠️ C# Code Builder</h1>
-            <div class="mission-box" id="mission-text3">ภารกิจ: โหลดข้อมูล...</div>
-            <div id="drop-zone"></div>
-            <div id="word-pool"></div>
-            <button class="btn-check" onclick="checkAnswer3()">ตรวจคำตอบ!</button>
-            <div id="feedback3"></div>
+        <!-- Chapter 2 Progress Bar -->
+        <div style="padding: 10px 20px 0 20px;">
+            <div class="chapter-progress-bar">
+                 🏆 เป้าหมายบทเรียน: คะแนนรวมแต่ละแท็บ <span id="c2-chapter-total-score">0</span> / 30 คะแนน เพื่อเรียนจบ!
+            </div>
+        </div>
+
+        <div class="tab-header">
+            <button class="tab-link active" onclick="openTab2(event, 'C2_Game1')">🎮 เกม 1: แยกประเภทการรับค่า</button>
+            <button class="tab-link" onclick="openTab2(event, 'C2_Game2')">🛠️ เกม 2: ประกอบโค้ด</button>
+            <button class="tab-link" onclick="openTab2(event, 'C2_Game3')">🧩 เกม 3: คำนวณผลลัพธ์</button>
+        </div>
+
+        <!-- Chapter 2 - Game 1: Sorter -->
+        <div id="C2_Game1" class="tab-content" style="display: flex;">
+            <div class="game-container g1-container" id="c2-g1-screen">
+                <h1>🎮 C# Input Sorter</h1>
+                <div class="stats"><div>คะแนนแท็บนี้: <span id="c2-score1">0</span> คะแนน</div></div>
+                <div id="c2-question-box1">"Ready?"</div>
+                <div class="btn-grid1">
+                    <button class="type-btn btn-int" onclick="checkAnswerC2_1('ReadLine')" style="font-size: 18px;">Console.ReadLine();</button>
+                    <button class="type-btn btn-float" onclick="checkAnswerC2_1('int.Parse')" style="font-size: 18px;">int.Parse(Console.ReadLine());</button>
+                    <button class="type-btn btn-char" onclick="checkAnswerC2_1('float.Parse')" style="font-size: 18px;">float.Parse(Console.ReadLine());</button>
+                    <button class="type-btn btn-string" onclick="checkAnswerC2_1('char.Parse')" style="font-size: 18px;">char.Parse(Console.ReadLine());</button>
+                </div>
+            </div>
+            <div class="max-score-screen" id="c2-g1-max-score">
+                <h2>🏆 ได้คะแนนเต็ม 10/10 คะแนนแล้ว!</h2>
+                <p>คุณผ่านมินิเกมนี้เรียบร้อยแล้ว กรุณาเลือกเล่นแท็บอื่นด้านบนเพื่อสะสมคะแนนต่อ</p>
+            </div>
+        </div>
+
+        <!-- Chapter 2 - Game 2: Code Builder -->
+        <div id="C2_Game2" class="tab-content">
+            <div class="game-container g3-container" id="c2-g2-screen">
+                <h1>🛠️ C# Code Builder</h1>
+                <div class="stats"><div>คะแนนแท็บนี้: <span id="c2-score2">0</span> คะแนน</div></div>
+                <div class="mission-box" id="c2-mission-text3">ภารกิจ: โหลดข้อมูล...</div>
+                <div id="c2-drop-zone"></div>
+                <div id="c2-word-pool"></div>
+                <button class="btn-check" onclick="checkAnswerC2_2()">ตรวจคำตอบ!</button>
+                <div id="c2-feedback3"></div>
+            </div>
+            <div class="max-score-screen" id="c2-g2-max-score">
+                <h2>🏆 ได้คะแนนเต็ม 10/10 คะแนนแล้ว!</h2>
+                <p>คุณผ่านมินิเกมนี้เรียบร้อยแล้ว กรุณาเลือกเล่นแท็บอื่นด้านบนเพื่อสะสมคะแนนต่อ</p>
+            </div>
+        </div>
+
+        <!-- Chapter 2 - Game 3: Evaluator -->
+        <div id="C2_Game3" class="tab-content">
+            <div class="game-container g2-container" id="c2-g3-screen">
+                <h1>🧩 C# Output Evaluator</h1>
+                <div class="stats"><div>คะแนนแท็บนี้: <span id="c2-score3">0</span> คะแนน</div></div>
+                <div id="c2-code-box3">Loading...</div>
+                <div class="btn-grid2" id="c2-choices-grid3"></div>
+            </div>
+            <div class="max-score-screen" id="c2-g3-max-score">
+                <h2>🏆 ได้คะแนนเต็ม 10/10 คะแนนแล้ว!</h2>
+                <p>คุณผ่านมินิเกมนี้เรียบร้อยแล้ว กรุณาเลือกเล่นแท็บอื่นด้านบนเพื่อสะสมคะแนนต่อ</p>
+            </div>
+        </div>
+
+        <!-- Chapter 2 Victory Modal -->
+        <div id="c2-victory-modal" class="modal-overlay" style="display: none;">
+            <div class="modal-content">
+                <h1 style="color: #ffb703; margin-top: 0; font-size: 36px;">🏆 ยินดีด้วย! คุณเรียนจบแล้ว</h1>
+                <p style="font-size: 20px; margin-bottom: 20px;">นี่คือสรุปคะแนนแต่ละด่านของคุณ:</p>
+                <div class="modal-score-summary">
+                    <div class="score-row">🎮 เกม 1: แยกประเภทการรับค่า <span><strong id="c2-final-tab1-score">0</strong> คะแนน</span></div>
+                    <div class="score-row">🛠️ เกม 2: ประกอบโค้ด <span><strong id="c2-final-tab2-score">0</strong> คะแนน</span></div>
+                    <div class="score-row">🧩 เกม 3: คำนวณผลลัพธ์ <span><strong id="c2-final-tab3-score">0</strong> คะแนน</span></div>
+                    <hr style="border: 1px solid #ffb703; margin: 15px 0;">
+                    <div class="score-row" style="font-size: 24px; color: #ffb703;">คะแนนรวมทั้งหมด: <span><strong id="c2-final-total-score">0</strong> / 30 คะแนน</span></div>
+                </div>
+                <div style="margin-top: 30px;">
+                    <button class="btn-restart" onclick="resetChapter2()" style="background-color: #2a9d8f; font-size: 20px; padding: 12px 30px; margin-right: 15px;">เล่นอีกครั้ง</button>
+                    <button class="btn-restart" onclick="showMainMenu()" style="background-color: #fb8500; font-size: 20px; padding: 12px 30px;">กลับไปหน้าหลัก</button>
+                </div>
+            </div>
         </div>
     </div>
 
 <script>
-    // --- ระบบเปลี่ยน Tab ---
+    // --- ระบบเปลี่ยน Tab (Chapter 1) ---
     function openTab(evt, tabName) {
-        let i, tabcontent, tablinks;
-        tabcontent = document.getElementsByClassName("tab-content");
+        let i;
+        let chapter = document.getElementById('Chapter1');
+        let tabcontent = chapter.getElementsByClassName("tab-content");
         for (i = 0; i < tabcontent.length; i++) {
             tabcontent[i].style.display = "none";
         }
-        tablinks = document.getElementsByClassName("tab-link");
+        let tablinks = chapter.getElementsByClassName("tab-link");
         for (i = 0; i < tablinks.length; i++) {
             tablinks[i].className = tablinks[i].className.replace(" active", "");
             if(tabName === 'Game1') evt.currentTarget.style.backgroundColor = "#e94560";
@@ -186,6 +591,46 @@
         evt.currentTarget.className += " active";
     }
 
+    // --- ระบบเปลี่ยน Tab (Chapter 2) ---
+    function openTab2(evt, tabName) {
+        let i;
+        let chapter = document.getElementById('Chapter2');
+        let tabcontent = chapter.getElementsByClassName("tab-content");
+        for (i = 0; i < tabcontent.length; i++) {
+            tabcontent[i].style.display = "none";
+        }
+        let tablinks = chapter.getElementsByClassName("tab-link");
+        for (i = 0; i < tablinks.length; i++) {
+            tablinks[i].className = tablinks[i].className.replace(" active", "");
+            if(tabName === 'C2_Game1') evt.currentTarget.style.backgroundColor = "#e94560";
+            else if(tabName === 'C2_Game2') evt.currentTarget.style.backgroundColor = "#fb8500";
+            else if(tabName === 'C2_Game3') evt.currentTarget.style.backgroundColor = "#ef233c";
+        }
+        for (i = 0; i < tablinks.length; i++) {
+            if(!tablinks[i].className.includes("active")) {
+                tablinks[i].style.backgroundColor = "";
+            }
+        }
+        document.getElementById(tabName).style.display = "flex";
+        evt.currentTarget.className += " active";
+    }
+
+    // --- ระบบ Chapter ---
+    function enterChapter(chapterId) {
+        document.getElementById('ChapterMenu').style.display = 'none';
+        document.getElementById(chapterId).style.display = 'flex';
+        if (chapterId === 'Chapter2') {
+            let firstTab = document.querySelector('#Chapter2 .tab-link.active');
+            if (firstTab) firstTab.style.backgroundColor = "#e94560";
+        }
+    }
+
+    function showMainMenu() {
+        document.getElementById('Chapter1').style.display = 'none';
+        document.getElementById('Chapter2').style.display = 'none';
+        document.getElementById('ChapterMenu').style.display = 'flex';
+    }
+
     // ================= โลจิกเกมที่ 1 (100 คำถาม) =================
     const q1 = [
         { q: '100', a: 'int' }, { q: '0', a: 'int' }, { q: '-5', a: 'int' }, { q: '42', a: 'int' }, { q: '2026', a: 'int' }, { q: '-999', a: 'int' }, { q: '12345', a: 'int' }, { q: '7', a: 'int' }, { q: '-1', a: 'int' }, { q: '888', a: 'int' }, { q: '1024', a: 'int' }, { q: '-256', a: 'int' }, { q: '99', a: 'int' }, { q: '500', a: 'int' }, { q: '-500', a: 'int' }, { q: '1', a: 'int' }, { q: '365', a: 'int' }, { q: '-12', a: 'int' }, { q: '404', a: 'int' }, { q: '777', a: 'int' }, { q: '-88', a: 'int' }, { q: '1000000', a: 'int' }, { q: '13', a: 'int' }, { q: '-100', a: 'int' }, { q: '55', a: 'int' },
@@ -193,18 +638,49 @@
         { q: "'A'", a: 'char' }, { q: "'z'", a: 'char' }, { q: "'1'", a: 'char' }, { q: "'0'", a: 'char' }, { q: "'9'", a: 'char' }, { q: "' '", a: 'char' }, { q: "'!'", a: 'char' }, { q: "'@'", a: 'char' }, { q: "'#'", a: 'char' }, { q: "'$'", a: 'char' }, { q: "'%'", a: 'char' }, { q: "'&'", a: 'char' }, { q: "'*'", a: 'char' }, { q: "'+'", a: 'char' }, { q: "'-'", a: 'char' }, { q: "'='", a: 'char' }, { q: "'?'", a: 'char' }, { q: "'/'", a: 'char' }, { q: "'x'", a: 'char' }, { q: "'Y'", a: 'char' }, { q: "'c'", a: 'char' }, { q: "'K'", a: 'char' }, { q: "'.'", a: 'char' }, { q: "'_'", a: 'char' }, { q: "'M'", a: 'char' },
         { q: '"Hello"', a: 'string' }, { q: '"C#"', a: 'string' }, { q: '"World"', a: 'string' }, { q: '"123"', a: 'string' }, { q: '"3.14f"', a: 'string' }, { q: '"true"', a: 'string' }, { q: '"false"', a: 'string' }, { q: '" "', a: 'string' }, { q: '""', a: 'string' }, { q: '"A"', a: 'string' }, { q: '"a"', a: 'string' }, { q: '"Apple"', a: 'string' }, { q: '"Cat"', a: 'string' }, { q: '"DOG"', a: 'string' }, { q: '"2026"', a: 'string' }, { q: '"-100"', a: 'string' }, { q: '"float"', a: 'string' }, { q: '"int"', a: 'string' }, { q: '"char"', a: 'string' }, { q: '"string"', a: 'string' }, { q: '"Game Over"', a: 'string' }, { q: '"100%"', a: 'string' }, { q: '"Winner"', a: 'string' }, { q: '"@_@"', a: 'string' }, { q: '"0"', a: 'string' }
     ];
-    let s1 = 0, l1 = 3, curQ1 = {};
+
+    let s1 = 0, s2 = 0, s3 = 0, curQ1 = {};
+
+    function checkChapter1Win() {
+        let total = s1 + s2 + s3;
+        document.getElementById('chapter-total-score').innerText = total;
+        if (total >= 30) {
+            document.getElementById('final-tab1-score').innerText = s1;
+            document.getElementById('final-tab2-score').innerText = s2;
+            document.getElementById('final-tab3-score').innerText = s3;
+            document.getElementById('final-total-score').innerText = total;
+            document.getElementById('victory-modal').style.display = 'flex';
+        }
+    }
+
+    function resetChapter1() {
+        s1 = 0; s2 = 0; s3 = 0;
+        curLv3 = 0;
+        document.getElementById('victory-modal').style.display = 'none';
+        document.getElementById('score1').innerText = s1;
+        document.getElementById('score2').innerText = s2;
+        document.getElementById('score3').innerText = s3;
+        document.getElementById('chapter-total-score').innerText = 0;
+        startGame1();
+        startGame2();
+        loadLevel3();
+    }
     
     function startGame1() {
-        s1 = 0; l1 = 3;
+        s1 = 0;
         document.getElementById('score1').innerText = s1;
-        document.getElementById('lives1').innerText = l1;
-        document.getElementById('g1-screen').style.display = 'block';
-        document.getElementById('g1-over').style.display = 'none';
         nextQ1();
     }
     
     function nextQ1() {
+        if (s1 >= 10) {
+            document.getElementById('g1-screen').style.display = 'none';
+            document.getElementById('g1-max-score').style.display = 'flex';
+            return;
+        } else {
+            document.getElementById('g1-screen').style.display = 'block';
+            document.getElementById('g1-max-score').style.display = 'none';
+        }
         curQ1 = q1[Math.floor(Math.random() * q1.length)];
         let box = document.getElementById('question-box1');
         box.innerText = curQ1.q;
@@ -214,20 +690,13 @@
     function checkAnswer1(ans) {
         let box = document.getElementById('question-box1');
         if (ans === curQ1.a) {
-            s1 += 10; box.style.backgroundColor = '#2a9d8f'; setTimeout(nextQ1, 200);
+            s1 = Math.min(10, s1 + 1); box.style.backgroundColor = '#2a9d8f'; setTimeout(nextQ1, 200);
         } else {
-            l1 -= 1; box.style.backgroundColor = '#e63946';
-            if (l1 <= 0) setTimeout(end1, 300);
-            else setTimeout(() => { box.style.backgroundColor = '#0f3460'; }, 300);
+            s1 = Math.max(0, s1 - 2); box.style.backgroundColor = '#e63946';
+            setTimeout(() => { box.style.backgroundColor = '#0f3460'; }, 300);
         }
         document.getElementById('score1').innerText = s1;
-        document.getElementById('lives1').innerText = l1;
-    }
-    
-    function end1() {
-        document.getElementById('g1-screen').style.display = 'none';
-        document.getElementById('g1-over').style.display = 'block';
-        document.getElementById('final-score1').innerText = s1;
+        checkChapter1Win();
     }
 
     // ================= โลจิกเกมที่ 2 (50 คำถาม) =================
@@ -283,18 +752,23 @@
         { code: `<span class="keyword">int</span> a = 2;<br><span class="keyword">int</span> b = 4;<br>Console.WriteLine(<span class="string">"{1} ลบ {0} เหลือ {2}"</span>, a, b, b - a);`, choices: ["4 ลบ 2 เหลือ 2", "2 ลบ 4 เหลือ 2", "b ลบ a เหลือ b-a", "4 ลบ 2 เหลือ {2}"], ans: 0 },
         { code: `<span class="keyword">string</span> w = <span class="string">"รหัส"</span>;<br><span class="keyword">int</span> p = 1234;<br>Console.WriteLine($<span class="string">"{w}: {p}"</span>);`, choices: ["รหัส: 1234", "w: p", "{w}: {p}", "รหัส: p"], ans: 0 }
     ];
-    let s2 = 0, l2 = 3, curQ2 = {};
+    let curQ2 = {};
 
     function startGame2() {
-        s2 = 0; l2 = 3;
+        s2 = 0;
         document.getElementById('score2').innerText = s2;
-        document.getElementById('lives2').innerText = l2;
-        document.getElementById('g2-screen').style.display = 'block';
-        document.getElementById('g2-over').style.display = 'none';
         nextQ2();
     }
 
     function nextQ2() {
+        if (s2 >= 10) {
+            document.getElementById('g2-screen').style.display = 'none';
+            document.getElementById('g2-max-score').style.display = 'flex';
+            return;
+        } else {
+            document.getElementById('g2-screen').style.display = 'block';
+            document.getElementById('g2-max-score').style.display = 'none';
+        }
         curQ2 = q2[Math.floor(Math.random() * q2.length)];
         document.getElementById('code-box2').innerHTML = curQ2.code;
         let grid = document.getElementById('choices-grid2');
@@ -312,20 +786,14 @@
         let btns = document.querySelectorAll('#choices-grid2 .choice-btn');
         btns.forEach(b => b.disabled = true);
         if (idx === curQ2.ans) {
-            s2 += 10; btn.style.backgroundColor = '#2a9d8f'; setTimeout(nextQ2, 800);
+            s2 = Math.min(10, s2 + 1); btn.style.backgroundColor = '#2a9d8f'; setTimeout(nextQ2, 800);
         } else {
-            l2 -= 1; btn.style.backgroundColor = '#d00000';
+            s2 = Math.max(0, s2 - 2); btn.style.backgroundColor = '#d00000';
             btns[curQ2.ans].style.backgroundColor = '#2a9d8f';
-            if (l2 <= 0) setTimeout(end2, 1000); else setTimeout(nextQ2, 1200);
+            setTimeout(nextQ2, 1200);
         }
         document.getElementById('score2').innerText = s2;
-        document.getElementById('lives2').innerText = l2;
-    }
-
-    function end2() {
-        document.getElementById('g2-screen').style.display = 'none';
-        document.getElementById('g2-over').style.display = 'block';
-        document.getElementById('final-score2').innerText = s2;
+        checkChapter1Win();
     }
 
     // ================= โลจิกเกมที่ 3 (50 ภารกิจ) =================
@@ -384,11 +852,19 @@
     let curLv3 = 0, selWords = [], poolWords = [];
 
     function loadLevel3() {
+        if (s3 >= 10) {
+            document.getElementById('g3-screen').style.display = 'none';
+            document.getElementById('g3-max-score').style.display = 'flex';
+            return;
+        } else {
+            document.getElementById('g3-screen').style.display = 'block';
+            document.getElementById('g3-max-score').style.display = 'none';
+        }
         if (curLv3 >= levels3.length) {
             document.getElementById('mission-text3').innerText = "🎉 จบเกม! คุณเคลียร์ภารกิจครบ 50 ข้อแล้ว!";
             document.getElementById('drop-zone').innerHTML = "";
             document.getElementById('word-pool').innerHTML = "";
-            document.querySelector('.btn-check').style.display = 'none';
+            document.querySelector('#Game3 .btn-check').style.display = 'none';
             return;
         }
         let data = levels3[curLv3];
@@ -422,10 +898,286 @@
         let fb = document.getElementById('feedback3');
         if (selWords.join("") === data.correct.join("")) {
             fb.innerText = "✅ ถูกต้อง!"; fb.className = "correct";
+            s3 = Math.min(10, s3 + 1);
+            document.getElementById('score3').innerText = s3;
+            checkChapter1Win();
             setTimeout(() => { curLv3++; loadLevel3(); }, 1200);
         } else {
             fb.innerText = "❌ ยังไม่ถูก ลองใหม่!"; fb.className = "wrong";
+            s3 = Math.max(0, s3 - 2);
+            document.getElementById('score3').innerText = s3;
+            checkChapter1Win();
         }
+    }
+
+    // ==========================================================
+    // ================= โลจิกเกมของ Chapter 2 =================
+    // ==========================================================
+
+    // ================= โลจิกเกมที่ 1 (แยกประเภทโอเปอเรเตอร์) =================
+    const c2_q1 = [
+        // Console.ReadLine()
+        { q: 'รับชื่อผู้ใช้พิมพ์เข้ามาจากแป้นพิมพ์', a: 'ReadLine' },
+        { q: 'รับที่อยู่อีเมลของผู้สมัครใช้งาน', a: 'ReadLine' },
+        { q: 'รับข้อความทั่วไปจากคีย์บอร์ด', a: 'ReadLine' },
+        { q: 'รับชื่อเมืองหรือชื่อจังหวัด', a: 'ReadLine' },
+        { q: 'รับรหัสผ่าน (เก็บเป็นข้อความ/String)', a: 'ReadLine' },
+        { q: 'รับข้อมูลที่อยู่อย่างละเอียดสำหรับจัดส่งสินค้า', a: 'ReadLine' },
+        { q: 'รับชื่อสินค้าหรือของขวัญ', a: 'ReadLine' },
+        { q: 'รับข้อความทักทายทั่วไปเพื่อเตรียมส่งให้เพื่อน', a: 'ReadLine' },
+        { q: 'รับเบอร์โทรศัพท์ (เก็บเป็นข้อความ String)', a: 'ReadLine' },
+        { q: 'รับข้อมูลข้อความที่พิมพ์เข้ามาตรงๆ ไม่แปลงชนิด', a: 'ReadLine' },
+
+        // int.Parse()
+        { q: 'รับค่าอายุการใช้งาน (จำนวนเต็ม)', a: 'int.Parse' },
+        { q: 'รับจำนวนแต้มคะแนนสะสมในเกม', a: 'int.Parse' },
+        { q: 'รับข้อมูลจำนวนผู้เล่นทั้งหมดในเซิร์ฟเวอร์', a: 'int.Parse' },
+        { q: 'รับค่าปี ค.ศ. เกิด เช่น 2026', a: 'int.Parse' },
+        { q: 'รับจำนวนชิ้นของสินค้าในตะกร้าช็อปปิ้ง', a: 'int.Parse' },
+        { q: 'รับความเร็วรถยนต์เฉลี่ย (จำนวนเต็มกิโลเมตร)', a: 'int.Parse' },
+        { q: 'รับค่าเลเวลตัวละครในเกมแนว RPG', a: 'int.Parse' },
+        { q: 'รับจำนวนเงินหน่วยบาทถ้วน (ไม่มีเศษสตางค์)', a: 'int.Parse' },
+        { q: 'รับจำนวนชั่วโมงการปฏิบัติงานประจำสัปดาห์', a: 'int.Parse' },
+        { q: 'รับจำนวนชีวิต (Life) ที่เหลือของตัวละคร', a: 'int.Parse' },
+
+        // float.Parse()
+        { q: 'รับค่าน้ำหนักตัวจริง (มีเศษทศนิยม กก.)', a: 'float.Parse' },
+        { q: 'รับค่าส่วนสูงหน่วยเมตร (มีเศษทศนิยม)', a: 'float.Parse' },
+        { q: 'รับค่าอุณหภูมิห้องจริง (เช่น 25.5 องศา)', a: 'float.Parse' },
+        { q: 'รับเกรดเฉลี่ยสะสมเรียนจบ ม.ปลาย (GPAX)', a: 'float.Parse' },
+        { q: 'รับเงินเดือนพนักงานรวมเศษสตางค์ (ทศนิยม)', a: 'float.Parse' },
+        { q: 'รับค่าราคาสินค้าต่างประเทศ (มีเศษทศนิยม)', a: 'float.Parse' },
+        { q: 'รับค่าพิกัดความต่างละติจูด (ทศนิยม)', a: 'float.Parse' },
+        { q: 'รับปริมาณน้ำฝนเฉลี่ยสะสม (ทศนิยม)', a: 'float.Parse' },
+        { q: 'รับอัตราดอกเบี้ยเงินกู้ร้อยละ (ทศนิยม)', a: 'float.Parse' },
+        { q: 'รับค่าความแรงลมเฉลี่ยพายุไต้ฝุ่น (ทศนิยม)', a: 'float.Parse' },
+
+        // char.Parse()
+        { q: 'รับเกรดวิชาเรียนเพียงตัวเดียว เช่น A, B, C', a: 'char.Parse' },
+        { q: 'รับคำตอบยืนยันตัวอักษรเดียว เช่น Y หรือ N', a: 'char.Parse' },
+        { q: 'รับอักขระระบุเพศ เช่น M หรือ F', a: 'char.Parse' },
+        { q: 'รับเครื่องหมายคำนวณเลขตัวเดียว เช่น +, -, *, /', a: 'char.Parse' },
+        { q: 'รับเครื่องหมายพิเศษตัวเดียว เช่น ? หรือ !', a: 'char.Parse' },
+        { q: 'รับขนาดไซส์เสื้ออักษรตัวเดียว เช่น S, M, L', a: 'char.Parse' },
+        { q: 'รับตัวอักษรตัวแรกสุดของชื่อจริง', a: 'char.Parse' },
+        { q: 'รับสัญลักษณ์ปุ่มสเปเชียลตัวเดียว เช่น @, #, $', a: 'char.Parse' },
+        { q: 'รับปุ่มควบคุมทิศทางอักษรเดียว เช่น W, A, S, D', a: 'char.Parse' },
+        { q: 'รับข้อมูลตัวอักษรใดๆ จากแป้นพิมพ์เพียง 1 อักขระ', a: 'char.Parse' }
+    ];
+    let s2_1 = 0, s2_2 = 0, s2_3 = 0, curQ2_1 = {};
+
+    function checkChapter2Win() {
+        let total = s2_1 + s2_2 + s2_3;
+        document.getElementById('c2-chapter-total-score').innerText = total;
+        if (total >= 30) {
+            document.getElementById('c2-final-tab1-score').innerText = s2_1;
+            document.getElementById('c2-final-tab2-score').innerText = s2_2;
+            document.getElementById('c2-final-tab3-score').innerText = s2_3;
+            document.getElementById('c2-final-total-score').innerText = total;
+            document.getElementById('c2-victory-modal').style.display = 'flex';
+        }
+    }
+
+    function resetChapter2() {
+        s2_1 = 0; s2_2 = 0; s2_3 = 0;
+        curLv2_2 = 0;
+        document.getElementById('c2-victory-modal').style.display = 'none';
+        document.getElementById('c2-score1').innerText = s2_1;
+        document.getElementById('c2-score2').innerText = s2_2;
+        document.getElementById('c2-score3').innerText = s2_3;
+        document.getElementById('c2-chapter-total-score').innerText = 0;
+        startGameC2_1();
+        loadLevelC2_2();
+        startGameC2_3();
+    }
+
+    function startGameC2_1() {
+        s2_1 = 0;
+        document.getElementById('c2-score1').innerText = s2_1;
+        nextQC2_1();
+    }
+
+    function nextQC2_1() {
+        if (s2_1 >= 10) {
+            document.getElementById('c2-g1-screen').style.display = 'none';
+            document.getElementById('c2-g1-max-score').style.display = 'flex';
+            return;
+        } else {
+            document.getElementById('c2-g1-screen').style.display = 'block';
+            document.getElementById('c2-g1-max-score').style.display = 'none';
+        }
+        curQ2_1 = c2_q1[Math.floor(Math.random() * c2_q1.length)];
+        let box = document.getElementById('c2-question-box1');
+        box.innerText = curQ2_1.q;
+        box.style.backgroundColor = '#0f3460';
+    }
+
+    function checkAnswerC2_1(ans) {
+        let box = document.getElementById('c2-question-box1');
+        if (ans === curQ2_1.a) {
+            s2_1 = Math.min(10, s2_1 + 1); box.style.backgroundColor = '#2a9d8f'; setTimeout(nextQC2_1, 200);
+        } else {
+            s2_1 = Math.max(0, s2_1 - 2); box.style.backgroundColor = '#e63946';
+            setTimeout(() => { box.style.backgroundColor = '#0f3460'; }, 300);
+        }
+        document.getElementById('c2-score1').innerText = s2_1;
+        checkChapter2Win();
+    }
+
+    // ================= โลจิกเกมที่ 2 (ประกอบโค้ด) =================
+    const c2_levels3 = [
+        { mission: "รับชื่อผู้ใช้เก็บในตัวแปร string ชื่อ name", correct: ["string", "name", "=", "Console.ReadLine", "(", ")", ";"], pool: ["string", "name", "=", "Console.ReadLine", "(", ")", ";", "int", "Parse"] },
+        { mission: "รับข้อความทั่วไปจากคีย์บอร์ดเก็บในตัวแปร string ชื่อ input", correct: ["string", "input", "=", "Console.ReadLine", "(", ")", ";"], pool: ["string", "input", "=", "Console.ReadLine", "(", ")", ";", "char", "Parse"] },
+        { mission: "รับที่อยู่อีเมลเก็บในตัวแปร string ชื่อ email", correct: ["string", "email", "=", "Console.ReadLine", "(", ")", ";"], pool: ["string", "email", "=", "Console.ReadLine", "(", ")", ";", "float", "Parse"] },
+        { mission: "รับค่าอายุของผู้ใช้เก็บในตัวแปร int ชื่อ age", correct: ["int", "age", "=", "int.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["int", "age", "=", "int.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "float", "Parse"] },
+        { mission: "รับคะแนนการสอบเก็บในตัวแปร int ชื่อ score", correct: ["int", "score", "=", "int.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["int", "score", "=", "int.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "char", "Parse"] },
+        { mission: "รับข้อมูลปี ค.ศ. เกิดเก็บในตัวแปร int ชื่อ birthYear", correct: ["int", "birthYear", "=", "int.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["int", "birthYear", "=", "int.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "string", "double"] },
+        { mission: "รับจำนวนชิ้นสินค้าในตะกร้าเก็บในตัวแปร int ชื่อ items", correct: ["int", "items", "=", "int.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["int", "items", "=", "int.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "float", "double"] },
+        { mission: "รับเลเวลตัวละครสูงสุดเก็บในตัวแปร int ชื่อ maxLevel", correct: ["int", "maxLevel", "=", "int.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["int", "maxLevel", "=", "int.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "char", "Parse"] },
+        { mission: "รับเงินเดือนรวมสตางค์เก็บในตัวแปร float ชื่อ salary", correct: ["float", "salary", "=", "float.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["float", "salary", "=", "float.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "int", "Parse"] },
+        { mission: "รับส่วนสูงทศนิยม (เมตร) เก็บในตัวแปร float ชื่อ height", correct: ["float", "height", "=", "float.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["float", "height", "=", "float.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "char", "Parse"] },
+        { mission: "รับน้ำหนักตัวทศนิยม (กก.) เก็บในตัวแปร float ชื่อ weight", correct: ["float", "weight", "=", "float.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["float", "weight", "=", "float.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "int", "Parse"] },
+        { mission: "รับอัตราดอกเบี้ยเงินกู้เก็บในตัวแปร float ชื่อ rate", correct: ["float", "rate", "=", "float.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["float", "rate", "=", "float.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "char", "Parse"] },
+        { mission: "รับอุณหภูมิห้องปัจจุบันเก็บในตัวแปร float ชื่อ temp", correct: ["float", "temp", "=", "float.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["float", "temp", "=", "float.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "int", "Parse"] },
+        { mission: "รับเกรดวิชาเรียนอักษรตัวเดียวเก็บในตัวแปร char ชื่อ grade", correct: ["char", "grade", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["char", "grade", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "string", "Parse"] },
+        { mission: "รับปุ่มกดเพื่อเล่นต่อหรือหยุด (Y/N) เก็บในตัวแปร char ชื่อ choice", correct: ["char", "choice", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["char", "choice", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "float", "Parse"] },
+        { mission: "รับเครื่องหมายการคำนวณหนึ่งตัวเก็บในตัวแปร char ชื่อ op", correct: ["char", "op", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["char", "op", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "int", "Parse"] },
+        { mission: "รับอักขระระบุเพศ (M/F) เก็บในตัวแปร char ชื่อ gender", correct: ["char", "gender", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["char", "gender", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "string", "Parse"] },
+        { mission: "รับไซส์เสื้ออักษรตัวเดียวเก็บในตัวแปร char ชื่อ size", correct: ["char", "size", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["char", "size", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "float", "Parse"] },
+        { mission: "รับค่าตัวเลข 0-9 ในรูปอักขระเก็บในตัวแปร char ชื่อ digit", correct: ["char", "digit", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["char", "digit", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "int", "Parse"] },
+        { mission: "รับปุ่มควบคุมทิศทางเดี่ยวเก็บในตัวแปร char ชื่อ key", correct: ["char", "key", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";"], pool: ["char", "key", "=", "char.Parse", "(", "Console.ReadLine", "(", ")", ")", ";", "string", "Parse"] }
+    ];
+    let curLv2_2 = 0, selWords2 = [], poolWords2 = [];
+
+    function loadLevelC2_2() {
+        if (s2_2 >= 10) {
+            document.getElementById('c2-g2-screen').style.display = 'none';
+            document.getElementById('c2-g2-max-score').style.display = 'flex';
+            return;
+        } else {
+            document.getElementById('c2-g2-screen').style.display = 'block';
+            document.getElementById('c2-g2-max-score').style.display = 'none';
+        }
+        if (curLv2_2 >= c2_levels3.length) {
+            document.getElementById('c2-mission-text3').innerText = "🎉 จบเกม! คุณเคลียร์ภารกิจครบทั้งหมดแล้ว!";
+            document.getElementById('c2-drop-zone').innerHTML = "";
+            document.getElementById('c2-word-pool').innerHTML = "";
+            document.querySelector('#C2_Game2 .btn-check').style.display = 'none';
+            return;
+        }
+        let data = c2_levels3[curLv2_2];
+        document.getElementById('c2-mission-text3').innerText = `ภารกิจที่ ${curLv2_2 + 1}: ${data.mission}`;
+        document.getElementById('c2-feedback3').innerText = "";
+        selWords2 = [];
+        poolWords2 = [...data.pool].sort(() => Math.random() - 0.5);
+        renderBlocksC2_2();
+    }
+
+    function renderBlocksC2_2() {
+        let dz = document.getElementById('c2-drop-zone');
+        let wp = document.getElementById('c2-word-pool');
+        dz.innerHTML = ""; wp.innerHTML = "";
+        
+        selWords2.forEach((w, i) => {
+            let b = document.createElement('div'); b.className = 'word-block'; b.innerText = w;
+            b.onclick = () => { poolWords2.push(selWords2.splice(i, 1)[0]); renderBlocksC2_2(); };
+            dz.appendChild(b);
+        });
+        
+        poolWords2.forEach((w, i) => {
+            let b = document.createElement('div'); b.className = 'word-block'; b.innerText = w;
+            b.onclick = () => { selWords2.push(poolWords2.splice(i, 1)[0]); renderBlocksC2_2(); };
+            wp.appendChild(b);
+        });
+    }
+
+    function checkAnswerC2_2() {
+        let data = c2_levels3[curLv2_2];
+        let fb = document.getElementById('c2-feedback3');
+        if (selWords2.join("") === data.correct.join("")) {
+            fb.innerText = "✅ ถูกต้อง!"; fb.className = "correct";
+            s2_2 = Math.min(10, s2_2 + 1);
+            document.getElementById('c2-score2').innerText = s2_2;
+            checkChapter2Win();
+            setTimeout(() => { curLv2_2++; loadLevelC2_2(); }, 1200);
+        } else {
+            fb.innerText = "❌ ยังไม่ถูก ลองใหม่!"; fb.className = "wrong";
+            s2_2 = Math.max(0, s2_2 - 2);
+            document.getElementById('c2-score2').innerText = s2_2;
+            checkChapter2Win();
+        }
+    }
+
+    // ================= โลจิกเกมที่ 3 (คำนวณผลลัพธ์) =================
+    const c2_q2 = [
+        { code: `<span class="keyword">int</span> x = 10 - 12 / 2 + 2 * 2;<br>Console.WriteLine(x);`, choices: ["4", "8", "12", "-2"], ans: 1 },
+        { code: `<span class="keyword">int</span> x = 7 % 3;<br>Console.WriteLine(x);`, choices: ["0", "1", "2", "7"], ans: 1 },
+        { code: `<span class="keyword">double</span> val = 2.5 * 2;<br><span class="keyword">int</span> x = (<span class="keyword">int</span>)val;<br>Console.WriteLine(x);`, choices: ["2", "4", "5", "error"], ans: 2 },
+        { code: `<span class="keyword">int</span> x = (<span class="keyword">int</span>)2.5 * 2;<br>Console.WriteLine(x);`, choices: ["2", "4", "5", "error"], ans: 1 },
+        { code: `<span class="keyword">int</span> x = (<span class="keyword">int</span>)(2.5 * 2);<br>Console.WriteLine(x);`, choices: ["2", "4", "5", "error"], ans: 2 },
+        { code: `<span class="keyword">int</span> a = 258;<br><span class="keyword">byte</span> b = (<span class="keyword">byte</span>)a;<br>Console.WriteLine(b);`, choices: ["0", "2", "258", "error"], ans: 1 },
+        { code: `<span class="keyword">int</span> x = 10;<br><span class="keyword">int</span> y = ++x;<br>Console.WriteLine(<span class="string">"x:{0} y:{1}"</span>, x, y);`, choices: ["x:10 y:10", "x:10 y:11", "x:11 y:10", "x:11 y:11"], ans: 3 },
+        { code: `<span class="keyword">int</span> x = 10;<br><span class="keyword">int</span> y = x++;<br>Console.WriteLine(<span class="string">"x:{0} y:{1}"</span>, x, y);`, choices: ["x:10 y:10", "x:10 y:11", "x:11 y:10", "x:11 y:11"], ans: 2 },
+        { code: `<span class="keyword">int</span> a = 1, b = 3, c = 4;<br><span class="keyword">bool</span> res = ((a + b) > 5) && ((c - b) < 2);<br>Console.WriteLine(res);`, choices: ["True", "False", "0", "1"], ans: 1 },
+        { code: `<span class="keyword">int</span> a = 1, b = 3, c = 4;<br><span class="keyword">bool</span> res = ((a + b) > 5) || ((c - b) < 2);<br>Console.WriteLine(res);`, choices: ["True", "False", "0", "1"], ans: 0 },
+        { code: `<span class="keyword">int</span> x = 3 * (2 + 4) % 2;<br>Console.WriteLine(x);`, choices: ["0", "2", "6", "18"], ans: 0 },
+        { code: `<span class="keyword">int</span> x = 5;<br>x *= 3;<br>Console.WriteLine(x);`, choices: ["3", "5", "8", "15"], ans: 3 },
+        { code: `<span class="keyword">int</span> x = 7;<br><span class="keyword">int</span> y = 2;<br><span class="keyword">double</span> z = x / y;<br>Console.WriteLine(z);`, choices: ["0", "3", "3.5", "2"], ans: 1 },
+        { code: `<span class="keyword">int</span> x = 7;<br><span class="keyword">int</span> y = 2;<br><span class="keyword">double</span> z = (<span class="keyword">double</span>)x / y;<br>Console.WriteLine(z);`, choices: ["3", "3.5", "2", "0"], ans: 1 },
+        { code: `<span class="keyword">int</span> x = 3 + 4 / 2;<br>Console.WriteLine(x);`, choices: ["3", "3.5", "5", "7"], ans: 2 },
+        { code: `<span class="keyword">int</span> x = 3 * 2 + 4 % 2;<br>Console.WriteLine(x);`, choices: ["5", "6", "8", "10"], ans: 1 },
+        { code: `<span class="keyword">int</span> x = (6 + 8 * 3) / 2;<br>Console.WriteLine(x);`, choices: ["15", "18", "21", "30"], ans: 0 },
+        { code: `<span class="keyword">int</span> x = 6 + (8 * 3) / 2;<br>Console.WriteLine(x);`, choices: ["15", "18", "21", "30"], ans: 1 },
+        { code: `<span class="keyword">int</span> x = (6 + 8) * 3 / 2;<br>Console.WriteLine(x);`, choices: ["15", "18", "21", "42"], ans: 2 },
+        { code: `<span class="keyword">int</span> a = 20;<br><span class="keyword">int</span> b = 40;<br><span class="keyword">int</span> c = 5;<br>Console.WriteLine((a + b) / c);`, choices: ["12", "28", "48", "60"], ans: 0 },
+        { code: `<span class="keyword">int</span> x = 10;<br>x -= 3;<br>Console.WriteLine(x++);`, choices: ["7", "8", "10", "6"], ans: 0 },
+        { code: `<span class="keyword">int</span> x = 10;<br>x -= 3;<br>Console.WriteLine(++x);`, choices: ["7", "8", "10", "6"], ans: 1 },
+        { code: `<span class="keyword">bool</span> p = <span class="keyword">true</span>;<br><span class="keyword">bool</span> q = <span class="keyword">false</span>;<br>Console.WriteLine(!p || q);`, choices: ["True", "False", "1", "0"], ans: 1 },
+        { code: `<span class="keyword">int</span> x = 15 % 4;<br>Console.WriteLine(x);`, choices: ["1", "2", "3", "4"], ans: 2 },
+        { code: `<span class="keyword">string</span> s = <span class="string">"100"</span>;<br><span class="keyword">int</span> x = <span class="keyword">int</span>.Parse(s) / 4;<br>Console.WriteLine(x);`, choices: ["25", "100", "4", "error"], ans: 0 }
+    ];
+    let curQ2_3 = {};
+
+    function startGameC2_3() {
+        s2_3 = 0;
+        document.getElementById('c2-score3').innerText = s2_3;
+        nextQC2_3();
+    }
+
+    function nextQC2_3() {
+        if (s2_3 >= 10) {
+            document.getElementById('c2-g3-screen').style.display = 'none';
+            document.getElementById('c2-g3-max-score').style.display = 'flex';
+            return;
+        } else {
+            document.getElementById('c2-g3-screen').style.display = 'block';
+            document.getElementById('c2-g3-max-score').style.display = 'none';
+        }
+        curQ2_3 = c2_q2[Math.floor(Math.random() * c2_q2.length)];
+        document.getElementById('c2-code-box3').innerHTML = curQ2_3.code;
+        let grid = document.getElementById('c2-choices-grid3');
+        grid.innerHTML = '';
+        curQ2_3.choices.forEach((choice, index) => {
+            let btn = document.createElement('button');
+            btn.className = 'choice-btn';
+            btn.innerText = (index + 1) + ". " + choice;
+            btn.onclick = () => checkAnswerC2_3(index, btn);
+            grid.appendChild(btn);
+        });
+    }
+
+    function checkAnswerC2_3(idx, btn) {
+        let btns = document.querySelectorAll('#c2-choices-grid3 .choice-btn');
+        btns.forEach(b => b.disabled = true);
+        if (idx === curQ2_3.ans) {
+            s2_3 = Math.min(10, s2_3 + 1); btn.style.backgroundColor = '#2a9d8f'; setTimeout(nextQC2_3, 800);
+        } else {
+            s2_3 = Math.max(0, s2_3 - 2); btn.style.backgroundColor = '#d00000';
+            btns[curQ2_3.ans].style.backgroundColor = '#2a9d8f';
+            setTimeout(nextQC2_3, 1200);
+        }
+        document.getElementById('c2-score3').innerText = s2_3;
+        checkChapter2Win();
     }
 
     // ================= เริ่มทำงานเมื่อโหลดหน้าเว็บ =================
@@ -442,6 +1194,14 @@
         // สับไพ่โจทย์และเริ่มเกม 3
         levels3.sort(() => Math.random() - 0.5);
         loadLevel3();
+
+        // --- โหลดเกมของ Chapter 2 ---
+        c2_q1.sort(() => Math.random() - 0.5);
+        c2_q2.sort(() => Math.random() - 0.5);
+        startGameC2_1();
+        c2_levels3.sort(() => Math.random() - 0.5);
+        loadLevelC2_2();
+        startGameC2_3();
     };
 </script>
 
