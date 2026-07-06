@@ -84,6 +84,10 @@
         #question-box1 { background-color: #0f3460; padding: 40px 20px; border-radius: 15px; font-size: 40px; font-family: monospace; font-weight: bold; margin-bottom: 30px; border: 3px solid #e94560; }
         #c2-question-box1 { background-color: #0f3460; padding: 40px 20px; border-radius: 15px; font-size: 32px; font-family: 'Kanit', sans-serif; font-weight: bold; margin-bottom: 30px; border: 3px solid #e94560; }
         .btn-grid1 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        @media (max-width: 600px) {
+            .btn-grid1.c2-btn-grid { grid-template-columns: 1fr; }
+            .type-btn { white-space: normal; word-wrap: break-word; }
+        }
         .type-btn { font-family: 'Kanit', sans-serif; font-size: 24px; font-weight: bold; padding: 15px; border: none; border-radius: 10px; cursor: pointer; color: white; transition: 0.1s;}
         .type-btn:active { transform: scale(0.95); }
         .btn-int { background-color: #e63946; } .btn-float { background-color: #457b9d; } .btn-char { background-color: #e9c46a; color: #333; } .btn-string { background-color: #2a9d8f; }
@@ -502,7 +506,7 @@
                 <h1>🎮 C# Input Sorter</h1>
                 <div class="stats"><div>คะแนนแท็บนี้: <span id="c2-score1">0</span> คะแนน</div></div>
                 <div id="c2-question-box1">"Ready?"</div>
-                <div class="btn-grid1">
+                <div class="btn-grid1 c2-btn-grid">
                     <button class="type-btn btn-int" onclick="checkAnswerC2_1('ReadLine')" style="font-size: 18px;">Console.ReadLine();</button>
                     <button class="type-btn btn-float" onclick="checkAnswerC2_1('int.Parse')" style="font-size: 18px;">int.Parse(Console.ReadLine());</button>
                     <button class="type-btn btn-char" onclick="checkAnswerC2_1('float.Parse')" style="font-size: 18px;">float.Parse(Console.ReadLine());</button>
